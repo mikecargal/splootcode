@@ -5,6 +5,7 @@ import { NodeBlock } from '../../layout/rendered_node';
 import { observer } from 'mobx-react';
 
 import "./property.css";
+import { InlineNode } from '../../layout/inline_node';
 
 interface PropertyEditState {
   userInput: string;
@@ -12,7 +13,7 @@ interface PropertyEditState {
 }
 
 interface PropertyProps {
-  block: NodeBlock;
+  inlineNode: InlineNode;
   leftPos: number;
   topPos: number;
   propertyName: string;
@@ -25,7 +26,7 @@ class PropertyEditor extends React.Component<PropertyProps, PropertyEditState> {
   constructor(props: PropertyProps) {
     super(props);
     let { propertyName } = this.props;
-    let { node } = this.props.block;
+    let { node } = this.props.inlineNode;
 
     let startValue = node.getProperty(propertyName).toString();
     this.state = {
@@ -36,7 +37,7 @@ class PropertyEditor extends React.Component<PropertyProps, PropertyEditState> {
 
   render() {
     let { propertyName, selectState } = this.props;
-    let { node } = this.props.block;
+    let { node } = this.props.inlineNode;
     let { userInput, autoWidth } = this.state;
     let edit = selectState === NodeSelectionState.EDITING;
 
@@ -77,8 +78,8 @@ class PropertyEditor extends React.Component<PropertyProps, PropertyEditState> {
   }
 
   onChange = (e : React.ChangeEvent<HTMLInputElement>) => {
-    let { block, propertyName } = this.props;
-    block.node.setProperty(propertyName, e.currentTarget.value);
+    let { inlineNode, propertyName } = this.props;
+    inlineNode.node.setProperty(propertyName, e.currentTarget.value);
     this.setState({
         userInput: e.currentTarget.value,
         autoWidth: this.getWidth(e.currentTarget.value)
@@ -88,8 +89,8 @@ class PropertyEditor extends React.Component<PropertyProps, PropertyEditState> {
 
 export class InlineProperty extends React.Component<PropertyProps> {
   render() {
-    let { block, leftPos, topPos, propertyName, selectState, selection } = this.props;
-    let { node } = this.props.block;
+    let { inlineNode, leftPos, topPos, propertyName, selectState, selection } = this.props;
+    let { node } = this.props.inlineNode;
     let isEditing = selectState === NodeSelectionState.EDITING;
     let isSelected = isEditing || selectState === NodeSelectionState.SELECTED
     let className = isEditing ? 'editing' : '';
@@ -102,6 +103,6 @@ export class InlineProperty extends React.Component<PropertyProps> {
       );
     }
     */
-    return <text x={leftPos} y={topPos + 20} style={{'fill': block.textColor}}>{ node.getProperty(propertyName) }</text>;
+    return <text x={leftPos} y={topPos + 20} style={{'fill': inlineNode.getTextColor()}}>{ node.getProperty(propertyName) }</text>;
   }
 }

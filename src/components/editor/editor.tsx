@@ -2,7 +2,7 @@ import React from 'react'
 import { NodeBlock } from '../../layout/rendered_node';
 
 import "./editor.css";
-import { NodeSelection } from '../../context/selection';
+import { NodeSelection, SelectionState } from '../../context/selection';
 import { observer } from 'mobx-react';
 import { ExpandedListBlockView } from './list_block';
 import { InsertBox } from './insert_box';
@@ -11,11 +11,14 @@ import { HTML_DOCUMENT } from '../../language/types/html/html_document';
 import { ActiveCursor } from './cursor';
 import { Panel } from '../panel';
 import { adaptNodeToPasteDestination, deserializeNode } from '../../language/type_registry';
+import { EditorLayout } from '../../layout/editor_layout';
+import { LineComponent } from './line';
 
 const SPLOOT_MIME_TYPE = 'application/splootcodenode';
 
 interface EditorProps {
   block: NodeBlock;
+  layout: EditorLayout;
   width: number;
   selection: NodeSelection;
 }
@@ -23,7 +26,7 @@ interface EditorProps {
 @observer
 export class Editor extends React.Component<EditorProps> {
   render() {
-    let {block, selection} = this.props;
+    let {block, selection, layout} = this.props;
     let fileBody = null;
     if (block.node.type === JAVASCRIPT_FILE || block.node.type === HTML_DOCUMENT) {
       fileBody = block.renderedChildSets['body'];
@@ -39,11 +42,12 @@ export class Editor extends React.Component<EditorProps> {
     return <div className="editor">
       <Panel selection={selection}/>
       <svg className="editor-svg" xmlns="http://www.w3.org/2000/svg" height={height} preserveAspectRatio="none">
-        <ExpandedListBlockView
-            block={fileBody}
-            selection={this.props.selection}
-            isSelected={false} />
-        <ActiveCursor selection={selection}/>
+        {
+          layout.lines.map(line => {
+            let result = <LineComponent key={line.key} line={line}/>
+            return result;
+          })
+        }
       </svg>
       { insertBox }
     </div>;
@@ -94,13 +98,35 @@ export class Editor extends React.Component<EditorProps> {
       // IME composition
       return;
     }
-    if (event.key === 'Backspace' || event.key === 'Delete') {
-      this.props.selection.deleteSelectedNode();
-    }
-    if (event.key === 'Tab') {
-      selection.moveCursorToNextInsert();
-      event.preventDefault();
-      event.cancelBubble = true;
+    switch (event.key) {
+      case 'Backspace':
+      case 'Delete':
+        this.props.selection.deleteSelectedNode();
+        break;
+      case 'Tab':
+        selection.moveCursorToNextInsert();
+        event.preventDefault();
+        event.cancelBubble = true;
+      case 'ArrowRight':
+        selection.moveKeyRight();
+        event.preventDefault();
+        event.cancelBubble = true;
+        break;
+      case 'ArrowLeft':
+        selection.moveKeyLeft();
+        event.preventDefault();
+        event.cancelBubble = true;
+        break;
+      case 'ArrowUp':
+        selection.moveKeyUp();
+        event.preventDefault();
+        event.cancelBubble = true;
+        break;
+      case 'ArrowDown':
+        selection.moveKeyDown();
+        event.preventDefault();
+        event.cancelBubble = true;
+        break;
     }
   }
 

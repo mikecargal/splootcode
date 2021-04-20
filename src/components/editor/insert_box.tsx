@@ -92,6 +92,11 @@ export class InsertBox extends React.Component<InsertBoxProps, InsertBoxState> {
                 className += " invalid"
               }
 
+              return (<div className="autocomplete-no-suggestions">
+                <em>No suggestions, you're on your own!</em>
+              </div>);
+              /*
+
               return (
                 <li
                   className={className}
@@ -106,6 +111,7 @@ export class InsertBox extends React.Component<InsertBoxProps, InsertBoxState> {
                   <span className="autocomplete-description">{ suggestion.description}</span>
                 </li>
               );
+              */
             })}
           </ul>
         );

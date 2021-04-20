@@ -3,21 +3,21 @@ import { NodeSelection } from './selection';
 import { NodeBlock } from '../layout/rendered_node';
 import { observable, action } from 'mobx';
 import { SplootDataSheet } from '../language/types/dataset/datasheet';
+import { EditorLayout } from '../layout/editor_layout';
+import { SplootNode } from '../language/node';
 
 export class EditorState {
   @observable
   rootNode: NodeBlock;
   selection: NodeSelection;
+  editorLayout: EditorLayout;
 
-  constructor() {
-    this.rootNode = null;
+  constructor(rootSplootNode: SplootNode) {
     this.selection = new NodeSelection();
-  }
-
-  @action
-  setRootNode(rootNode: NodeBlock) {
-    this.rootNode = rootNode;
-    this.selection.setRootNode(rootNode);
+    this.editorLayout = new EditorLayout(rootSplootNode);
+    let newRootNode = new NodeBlock(null, rootSplootNode, this.selection, 0, false);
+    this.selection.setRootNode(newRootNode);
+    this.rootNode = newRootNode;
   }
 }
 

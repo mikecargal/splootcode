@@ -145,6 +145,27 @@ export class NodeSelection {
   }
 
   @action
+  moveKeyDown() {
+    console.log('down');
+  }
+
+  @action
+  moveKeyUp() {
+    console.log('up');
+  }
+
+  @action
+  moveKeyRight() {
+    console.log('right');
+  }
+
+  @action
+  moveKeyLeft() {
+    console.log('left');
+  }
+
+
+  @action
   startInsertNode(listBlock: RenderedChildSetBlock, index: number) {
     this.exitEdit();
     if (this.cursor) {

@@ -188,7 +188,7 @@ class PageEditorInternal extends Component<PageEditorProps, PageEditorState> {
                   (isNodeEditor) ?
                   <EditorStateContext.Provider value={selectedFile}>
                   <div className={'editor-panel selected'}>
-                    <Editor block={selectedFile.rootNode} selection={selectedFile.selection} width={300} />
+                    <Editor block={selectedFile.rootNode} selection={selectedFile.selection} layout={selectedFile.editorLayout} width={300} />
                   </div>
                   </EditorStateContext.Provider>
                   :
@@ -208,10 +208,7 @@ class PageEditorInternal extends Component<PageEditorProps, PageEditorState> {
         dataSheetState.setDataSheetNode(file.rootNode as SplootDataSheet);
         this.setState({selectedDatasheet: dataSheetState, isNodeEditor: false});
       } else {
-        let editorState = new EditorState();
-        let newRootNode = new NodeBlock(null, file.rootNode, editorState.selection, 0, false);
-        editorState.selection.setRootNode(newRootNode);
-        editorState.setRootNode(newRootNode);
+        let editorState = new EditorState(file.rootNode);
         this.setState({selectedFile: editorState, isNodeEditor: true});
       }
     };

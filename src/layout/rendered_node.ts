@@ -11,7 +11,10 @@ import { getColour } from "./colors";
 export const NODE_INLINE_SPACING = 8;
 export const NODE_INLINE_SPACING_SMALL = 6;
 export const NODE_BLOCK_HEIGHT = 30;
-const INDENT = 30;
+export const NODE_BLOCK_SPACING = 4;
+export const TOP_LEVEL_INDENT = 10;
+export const INDENT = 30;
+export const END_BLOCK_SPACING = 10;
 
 export class RenderedParentRef {
   node: NodeBlock;
@@ -127,6 +130,7 @@ export class NodeBlock implements NodeObserver {
       this.rowHeight = Math.max(this.rowHeight, childSetBlock.height);
     }
   }
+  
 
   updateLayout() {
     let nodeLayout = this.node.getNodeLayout();

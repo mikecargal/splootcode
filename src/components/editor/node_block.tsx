@@ -12,10 +12,11 @@ import { SPLOOT_EXPRESSION } from '../../language/types/js/expression';
 
 import "./node_block.css";
 import { observer } from 'mobx-react';
+import { InlineNode } from '../../layout/inline_node';
 
 
 interface NodeBlockProps {
-  block: NodeBlock;
+  inlineNode: InlineNode;
   selection: NodeSelection;
   selectionState: NodeSelectionState;
   isInsideBreadcrumbs?: boolean;
@@ -71,34 +72,35 @@ function getBreadcrumbMiddleShapePath(x: number, y: number, width: number) : str
 export class EditorNodeBlock extends React.Component<NodeBlockProps> {
   
   render() {
-    let {block, selection, selectionState, onClickHandler} = this.props;
+    let {inlineNode, selection, selectionState, onClickHandler} = this.props;
     let isSelected = selectionState === NodeSelectionState.SELECTED;
 
-    if (block === null) {
+    if (inlineNode === null) {
       return null;
     }
 
-    let width = block.blockWidth;
-    let leftPos = block.x + block.marginLeft;
-    let topPos = block.y;
+    let width = inlineNode.width;
+    let leftPos = inlineNode.x + inlineNode.marginLeft;
+    let topPos = 0;
     let internalLeftPos = leftPos + 10;
 
-    if (block.node.type === SPLOOT_EXPRESSION) {
-      return <SplootExpressionView block={block} selection={selection} selectionState={selectionState}/>
+    if (inlineNode.node.type === SPLOOT_EXPRESSION) {
+      // return <SplootExpressionView block={block} selection={selection} selectionState={selectionState}/>
+      return null;
     }
 
     let shape : ReactElement;
     if (this.props.isInsideBreadcrumbs) {
-      if (block.leftBreadcrumbChildSet) {
+      if (inlineNode.leftBreadcrumbChildSet) {
         shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbMiddleShapePath(leftPos + 1, topPos + 1, width)} onClick={onClickHandler} />
       } else {
         shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbStartShapePath(leftPos + 1, topPos + 1, width)} onClick={onClickHandler} />
       }
     } else {
-      if (block.leftBreadcrumbChildSet) {
+      if (inlineNode.leftBreadcrumbChildSet) {
         shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbEndShapePath(leftPos + 1, topPos + 1, width)} onClick={onClickHandler} />
       } else {
-        if (block.layout.small) {
+        if (inlineNode.isSmall()) {
           shape = <rect className={"svgsplootnode" + (isSelected ? " selected" : "")} x={leftPos + 1} y={topPos + 5} height="21" width={width} rx="4" onClick={onClickHandler} />
           internalLeftPos = leftPos + 8;
         } else {
@@ -111,77 +113,66 @@ export class EditorNodeBlock extends React.Component<NodeBlockProps> {
         { this.renderLeftAttachedBreadcrumbsChildSet() }
         { shape }
         {
-          block.renderedInlineComponents.map((renderedComponent: RenderedInlineComponent, idx: number) => {
+          inlineNode.renderedInlineComponents.map((renderedComponent: RenderedInlineComponent, idx: number) => {
             let result = null;
             if (renderedComponent.layoutComponent.type === LayoutComponentType.CHILD_SET_BLOCK) {
               // pass
             }
             else if (renderedComponent.layoutComponent.type === LayoutComponentType.STRING_LITERAL) {
-              result = <InlineStringLiteral key={idx} topPos={topPos} leftPos={internalLeftPos} block={block} propertyName={renderedComponent.layoutComponent.identifier} selectState={selectionState} selection={selection}/>
+              result = <InlineStringLiteral key={idx} topPos={topPos} leftPos={internalLeftPos} inlineNode={inlineNode} propertyName={renderedComponent.layoutComponent.identifier} selectState={selectionState} selection={selection}/>
               internalLeftPos += renderedComponent.width;
             }
             else if (renderedComponent.layoutComponent.type === LayoutComponentType.PROPERTY) {
-              result = <InlineProperty key={idx} topPos={topPos} leftPos={internalLeftPos} block={block} propertyName={renderedComponent.layoutComponent.identifier} selectState={selectionState} selection={selection} />
+              result = <InlineProperty key={idx} topPos={topPos} leftPos={internalLeftPos} inlineNode={inlineNode} propertyName={renderedComponent.layoutComponent.identifier} selectState={selectionState} selection={selection} />
               internalLeftPos += renderedComponent.width;
             }
             else if (renderedComponent.layoutComponent.type === LayoutComponentType.CHILD_SET_TREE_BRACKETS) {
-              let childSetBlock = block.renderedChildSets[renderedComponent.layoutComponent.identifier];
-              result = <TreeListBlockBracketsView key={idx} block={childSetBlock} isSelected={isSelected} selection={this.props.selection}/>
+              let childSetBlock = inlineNode.inlineChildSets[renderedComponent.layoutComponent.identifier];
+              // result = <TreeListBlockBracketsView key={idx} block={childSetBlock} isSelected={isSelected} selection={this.props.selection}/>
               internalLeftPos += renderedComponent.width;
             }
             else if (renderedComponent.layoutComponent.type === LayoutComponentType.CHILD_SET_TREE) {
-              let childSetBlock = block.renderedChildSets[renderedComponent.layoutComponent.identifier];
-              result = <TreeListBlockView key={idx} block={childSetBlock} isSelected={isSelected} selection={this.props.selection}/>
+              let childSetBlock = inlineNode.inlineChildSets[renderedComponent.layoutComponent.identifier];
+              // result = <TreeListBlockView key={idx} block={childSetBlock} isSelected={isSelected} selection={this.props.selection}/>
               internalLeftPos += renderedComponent.width;
             }
             else if (renderedComponent.layoutComponent.type === LayoutComponentType.CHILD_SET_INLINE) {
-              let childSetBlock = block.renderedChildSets[renderedComponent.layoutComponent.identifier];
-              result = <InlineListBlockView key={idx} block={childSetBlock} isSelected={isSelected} selection={this.props.selection}/>
+              let inlineChildSet = inlineNode.inlineChildSets[renderedComponent.layoutComponent.identifier];
+              result = <InlineListBlockView key={idx} inlineChildSet={inlineChildSet} isSelected={isSelected} selection={this.props.selection}/>
               internalLeftPos += renderedComponent.width;
             }
             else {
               // Keywords and child separators left
               let className = '';
-              result = <text x={internalLeftPos} y={topPos + 20} key={idx} style={{fill: block.textColor}} >{ renderedComponent.layoutComponent.identifier}</text>
+              result = <text x={internalLeftPos} y={topPos + 20} key={idx} style={{fill: inlineNode.getTextColor()}} >{ renderedComponent.layoutComponent.identifier}</text>
               internalLeftPos += renderedComponent.width;
             }            
             return result;
           })
         }
         { this.renderRightAttachedChildSet() }
-        { block.indentedBlockHeight > 0 ? 
-        <line x1={leftPos + 6} y1={topPos + 34} x2={leftPos + 6} y2={topPos - 8 + block.indentedBlockHeight + block.rowHeight} className={"indented-rule " + (isSelected ? "selected" : "")} /> : null }
-        {
-          block.layout.components.map((layoutComponent: LayoutComponent, idx: number) => {
-            if (layoutComponent.type === LayoutComponentType.CHILD_SET_BLOCK) {
-              let childSetBlock = block.renderedChildSets[layoutComponent.identifier];
-              let result = <ExpandedListBlockView key={idx} block={childSetBlock} isSelected={isSelected} selection={this.props.selection} />
-              return result;
-            }
-          })
-        }
     </React.Fragment>
   }
 
   renderLeftAttachedBreadcrumbsChildSet() {
-    let {block, selection, selectionState} = this.props;
-    if (block.leftBreadcrumbChildSet === null) {
+    let {inlineNode, selection, selectionState} = this.props;
+    if (inlineNode.leftBreadcrumbChildSet === null) {
       return null;
     }
     let isSelected = selectionState === NodeSelectionState.SELECTED;
-    let childSetBlock = block.renderedChildSets[block.leftBreadcrumbChildSet];
-    return <InlineListBlockView key={'breadcrumbsleft'} isInsideBreadcrumbs={true} block={childSetBlock} isSelected={isSelected} selection={selection}/>;
+    let childSetBlock = inlineNode.inlineChildSets[inlineNode.leftBreadcrumbChildSet];
+    // return <InlineListBlockView key={'breadcrumbsleft'} isInsideBreadcrumbs={true} block={childSetBlock} isSelected={isSelected} selection={selection}/>;
   }
 
   renderRightAttachedChildSet() : ReactElement {
-    let {block, selection, selectionState} = this.props;
+    let {inlineNode, selection, selectionState} = this.props;
     let isSelected = selectionState === NodeSelectionState.SELECTED;
-    if (block.rightAttachedChildSet === null) {
+    if (inlineNode.rightAttachedChildSet === null) {
       return null;
     }
-    let childSetBlock = block.renderedChildSets[block.rightAttachedChildSet];
+    let childSetBlock = inlineNode.inlineChildSets[inlineNode.rightAttachedChildSet];
     if (childSetBlock.componentType === LayoutComponentType.CHILD_SET_ATTACH_RIGHT) {
-      return <AttachedChildRightExpressionView block={childSetBlock} isSelected={isSelected} selection={selection}></AttachedChildRightExpressionView>
+      // return <AttachedChildRightExpressionView block={childSetBlock} isSelected={isSelected} selection={selection}></AttachedChildRightExpressionView>
     }
     return null;
   }

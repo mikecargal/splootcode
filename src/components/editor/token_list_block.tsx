@@ -32,11 +32,11 @@ export class TokenListBlockView extends React.Component<TokenListBlockViewProps>
             let insertBefore = block.isInsert(idx);
             let result =  (
               <React.Fragment>
-                <EditorNodeBlock
+                {/* <EditorNodeBlock
                   block={nodeBlock}
                   selection={this.props.selection}
                   selectionState={selectionState}
-                  onClickHandler={this.onClickByIndex(idx)}/>
+                  onClickHandler={this.onClickByIndex(idx)}/> */}
                 <InlineCursor index={idx} listBlock={block} leftPos={nodeBlock.x} topPos={nodeBlock.y} selection={selection}/>
               </React.Fragment>
             );

@@ -47,11 +47,11 @@ export class TreeListBlockView extends React.Component<TreeListBlockViewProps> {
             let result = <React.Fragment>
               { line }
               { label }
-              <EditorNodeBlock
+              {/* <EditorNodeBlock
                   block={nodeBlock}
                   selection={this.props.selection}
                   selectionState={selectionState}
-                  onClickHandler={this.onClickByIndex(idx)} />
+                  onClickHandler={this.onClickByIndex(idx)} /> */}
               <TreeDotCursorSecondary index={idx + 1} listBlock={block} leftPos={nodeBlock.x} topPos={nodeBlock.y + nodeBlock.rowHeight} selection={selection}/>
             </React.Fragment>
             // topPos += nodeBlock.rowHeight;
@@ -116,11 +116,11 @@ export class TreeListBlockBracketsView extends React.Component<TreeListBlockView
                 { line }
                 { label }
                 <path className={connectorClass} d={"M " + (nodeBlock.x - 6) + " " + nodeBlock.y + " a 40 40 45 0 0 0 30" } fill="transparent"></path>
-                <EditorNodeBlock
+                {/* <EditorNodeBlock
                     block={nodeBlock}
                     selection={this.props.selection}
                     selectionState={selectionState}
-                    onClickHandler={this.onClickByIndex(idx)} />
+                    onClickHandler={this.onClickByIndex(idx)} /> */}
                 <TreeDotCursorSecondary index={idx + 1} listBlock={block} leftPos={nodeBlock.x} topPos={nodeBlock.y + nodeBlock.rowHeight} selection={selection}/>
                 <path className={connectorClass} d={"M " + (nodeBlock.x + nodeBlock.rowWidth + 2) + " " + nodeBlock.y + " a 40 40 45 0 1 0 30" } fill="transparent"></path>
               </React.Fragment>
@@ -136,12 +136,12 @@ export class TreeListBlockBracketsView extends React.Component<TreeListBlockView
               line = <path className={connectorClass} d={"M " + (leftPos + 8) + " " + (topPos - 18) + " v 34 h 9"} fill="transparent"/>
               let result = <React.Fragment>
                 { line }
-                <EditorNodeBlock
+                {/* <EditorNodeBlock
                     block={nodeBlock}
                     selection={this.props.selection}
                     selectionState={selectionState}
                     onClickHandler={this.onClickByIndex(idx)}
-                />
+                /> */}
                 <TreeDotCursorSecondary index={idx + 1} listBlock={block} leftPos={nodeBlock.x} topPos={nodeBlock.y + nodeBlock.rowHeight} selection={selection}/>
               </React.Fragment>
               return result;

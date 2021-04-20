@@ -5,6 +5,7 @@ import { NodeBlock } from '../../layout/rendered_node';
 import { observer } from 'mobx-react';
 
 import "./string_literal.css";
+import { InlineNode } from '../../layout/inline_node';
 
 interface StringLiteralEditState {
   userInput: string;
@@ -12,7 +13,7 @@ interface StringLiteralEditState {
 }
 
 interface StringLiteralProps {
-  block: NodeBlock;
+  inlineNode: InlineNode;
   leftPos: number;
   topPos: number;
   propertyName: string;
@@ -25,7 +26,7 @@ class StringLiteralEditor extends React.Component<StringLiteralProps, StringLite
   constructor(props: StringLiteralProps) {
     super(props);
     let { propertyName } = this.props;
-    let { node } = this.props.block;
+    let { node } = this.props.inlineNode;
 
     let startValue = node.getProperty(propertyName);
     this.state = {
@@ -36,7 +37,7 @@ class StringLiteralEditor extends React.Component<StringLiteralProps, StringLite
 
   render() {
     let { propertyName, selectState } = this.props;
-    let { node } = this.props.block;
+    let { node } = this.props.inlineNode;
     let { userInput, autoWidth } = this.state;
     let edit = selectState === NodeSelectionState.EDITING;
 
@@ -77,7 +78,7 @@ class StringLiteralEditor extends React.Component<StringLiteralProps, StringLite
   }
 
   onChange = (e : React.ChangeEvent<HTMLInputElement>) => {
-    let { block, propertyName } = this.props;
+    let { inlineNode: block, propertyName } = this.props;
     block.node.setProperty(propertyName, e.currentTarget.value);
     this.setState({
         userInput: e.currentTarget.value,
@@ -88,8 +89,8 @@ class StringLiteralEditor extends React.Component<StringLiteralProps, StringLite
 
 export class InlineStringLiteral extends React.Component<StringLiteralProps> {
   render() {
-    let { block, propertyName, selectState, leftPos, topPos, selection } = this.props;
-    let { node } = this.props.block;
+    let { inlineNode, propertyName, selectState, leftPos, topPos, selection } = this.props;
+    let { node } = this.props.inlineNode;
     let isEditing = selectState === NodeSelectionState.EDITING;
     let isSelected = isEditing || selectState === NodeSelectionState.SELECTED
     let className = isEditing ? 'editing' : '';
@@ -102,6 +103,6 @@ export class InlineStringLiteral extends React.Component<StringLiteralProps> {
       );
     }
     */
-    return <text className={"string-literal " + className} x={leftPos} y={topPos + 21} style={{fill: block.textColor}}>"{ node.getProperty(propertyName) }"</text>;
+    return <text className={"string-literal " + className} x={leftPos} y={topPos + 21} style={{fill: inlineNode.getTextColor()}}>"{ node.getProperty(propertyName) }"</text>;
   }
 }
