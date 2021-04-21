@@ -1,3 +1,4 @@
+import { LineCursor } from "../context/selection";
 import { ChildSet } from "../language/childset";
 import { LayoutComponent } from "../language/type_registry";
 import { InlineNode } from "./inline_node";
@@ -32,7 +33,7 @@ export class Line {
     this.y = y;
   }
   
-  getCursorByXCoordinate(x: number) {
-  
+  getCursorByXCoordinate(x: number) : LineCursor {
+    return new LineCursor([]);
   }
 }

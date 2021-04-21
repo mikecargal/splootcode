@@ -46,12 +46,14 @@ export class Editor extends React.Component<EditorProps> {
       let insertKey = selection.cursor.index + selection.cursor.listBlock.parentRef.childSetId + selection.cursor.listBlock.parentRef.node.node.type;
       insertBox = <InsertBox key={insertKey} editorX={1} editorY={45} selection={selection} insertBoxData={selection.insertBox} />
     }
+    let selectedLine = this.props.selection.line;
     return <div className="editor">
       <Panel selection={selection}/>
       <svg className="editor-svg" xmlns="http://www.w3.org/2000/svg" ref={this.svgRef} height={height} preserveAspectRatio="none" onClick={this.clickHandler}>
         {
           layout.lines.map(line => {
-            let result = <LineComponent key={line.key} line={line}/>
+            let selection = selectedLine === line ? this.props.selection : null;
+            let result = <LineComponent key={line.key} line={line} selection={selection}/>
             return result;
           })
         }
@@ -64,15 +66,7 @@ export class Editor extends React.Component<EditorProps> {
     let rect = this.svgRef.current.getBoundingClientRect();
     let x = event.clientX - rect.left;
     let y = event.clientY - rect.top;
-    let selectedLine : Line = null;
-    for (let line of this.props.layout.lines) {
-      if (line.y > y) {
-        break;
-      }
-      selectedLine = line;
-    }
-    console.log(x, y);
-    console.log(selectedLine);
+    this.props.selection.selectByCoordinate(x, y);
   }
 
   clipboardHandler = (event: ClipboardEvent) => {

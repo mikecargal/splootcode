@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { observer } from "mobx-react";
-import { NodeSelection, NodeSelectionState } from "../../context/selection";
+import { LineCursor, NodeSelection, NodeSelectionState } from "../../context/selection";
 import { NodeBlock } from "../../layout/rendered_node";
 import { EditorNodeBlock } from './node_block';
 
@@ -14,13 +14,13 @@ import { InlineChildSet } from '../../layout/inline_childset';
 interface TokenListBlockViewProps {
     inlineChildSet: InlineChildSet;
     isSelected: boolean;
-    selection: NodeSelection;
+    lineCursor: LineCursor;
   }
   
 @observer
 export class TokenListBlockView extends React.Component<TokenListBlockViewProps> {
   render() {
-    let {isSelected, inlineChildSet: inlineChildSet, selection} = this.props;
+    let {isSelected, inlineChildSet: inlineChildSet, lineCursor} = this.props;
     let className = isSelected ? 'selected' : '';
 
     let nodeCount = inlineChildSet.inlineNodes.length;
@@ -35,8 +35,8 @@ export class TokenListBlockView extends React.Component<TokenListBlockViewProps>
               <React.Fragment>
                 <EditorNodeBlock
                   inlineNode={inlineNode}
-                  selection={this.props.selection}
-                  selectionState={NodeSelectionState.UNSELECTED}/>
+                  lineCursor={lineCursor}
+                />
               {/* { allowInsert ? <InlineCursor index={idx} listBlock=
                 <InlineCursor index={idx} listBlock={inlineChildSet} leftPos={nodeBlock.x} topPos={nodeBlock.y} selection={selection}/> */}
               </React.Fragment>

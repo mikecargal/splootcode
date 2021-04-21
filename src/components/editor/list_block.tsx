@@ -1,6 +1,6 @@
 import React from 'react'
 import { EditorNodeBlock } from './node_block';
-import { NodeSelection, NodeSelectionState } from '../../context/selection';
+import { LineCursor, NodeSelection, NodeSelectionState } from '../../context/selection';
 import { observer } from 'mobx-react';
 import { InlineChildSet } from '../../layout/inline_childset';
 import { InlineNode } from '../../layout/inline_node';
@@ -12,14 +12,14 @@ import "./list_block.css";
 interface InlineListBlockViewProps {
   inlineChildSet: InlineChildSet;
   isSelected: boolean;
-  selection: NodeSelection;
+  lineCursor: LineCursor;
   isInsideBreadcrumbs?: boolean;
 }
 
 @observer
 export class InlineListBlockView extends React.Component<InlineListBlockViewProps> {
   render() {
-    let {inlineChildSet, selection, isInsideBreadcrumbs} = this.props;
+    let {inlineChildSet, lineCursor, isInsideBreadcrumbs} = this.props;
     // let allowInsert = block.allowInsert();
     return <React.Fragment>
       {
@@ -29,8 +29,7 @@ export class InlineListBlockView extends React.Component<InlineListBlockViewProp
             <React.Fragment>
               <EditorNodeBlock
                   inlineNode={inlineNode}
-                  selection={this.props.selection}
-                  selectionState={NodeSelectionState.UNSELECTED}
+                  lineCursor={lineCursor}
                   isInsideBreadcrumbs={isInsideBreadcrumbs} />
               {/* { allowInsert ? <InlineCursor index={idx} listBlock={block} leftPos={block.x} topPos={block.y} selection={selection}/> : null} */}
             </React.Fragment>

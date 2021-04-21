@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { observer } from "mobx-react";
-import { NodeSelection, NodeSelectionState } from "../../context/selection";
+import { LineCursor, NodeSelection, NodeSelectionState } from "../../context/selection";
 import { NodeBlock, NODE_BLOCK_HEIGHT, RenderedInlineComponent } from "../../layout/rendered_node";
 import { EditorNodeBlock } from './node_block';
 
@@ -14,16 +14,17 @@ import { InlineNode } from '../../layout/inline_node';
 interface TreeListBlockViewProps {
   leftPos: number;
   inlineChildSet: InlineChildSet;
-  isSelected: boolean;
-  selection: NodeSelection;
+  lineCursor: LineCursor;
 }
 
 @observer
 export class TreeListBlockView extends React.Component<TreeListBlockViewProps> {
   render() {
-    let {isSelected, leftPos, inlineChildSet, selection} = this.props;
+    let {leftPos, inlineChildSet, lineCursor} = this.props;
     let isLastInlineComponent = true; //block.isLastInlineComponent;
     let topPos = 0;
+
+    let isSelected = false; // TODO 
 
     let connectorClass = "tree-connector " + (isSelected ? "selected" : "");
     let labelClass = "tree-label " + (isSelected ? "selected" : "");
@@ -51,8 +52,7 @@ export class TreeListBlockView extends React.Component<TreeListBlockViewProps> {
               { label }
               <EditorNodeBlock
                   inlineNode={nodeBlock}
-                  selection={this.props.selection}
-                  selectionState={selectionState} />
+                  lineCursor={lineCursor} />
               {/* <TreeDotCursorSecondary index={idx + 1} listBlock={block} leftPos={nodeBlock.x} topPos={nodeBlock.y + nodeBlock.rowHeight} selection={selection}/> */}
             </React.Fragment>
             // topPos += nodeBlock.rowHeight;
@@ -69,8 +69,9 @@ export class TreeListBlockView extends React.Component<TreeListBlockViewProps> {
 @observer
 export class TreeListBlockBracketsView extends React.Component<TreeListBlockViewProps> {
   render() {
-    let {isSelected, leftPos, inlineChildSet, selection} = this.props;
+    let {lineCursor, leftPos, inlineChildSet} = this.props;
     let isLastInlineComponent = true; // block.isLastInlineComponent;
+    let isSelected = false; // TODO
     let className = isSelected ? 'selected' : '';
     let topPos = 0;
 
@@ -103,9 +104,9 @@ export class TreeListBlockBracketsView extends React.Component<TreeListBlockView
                 { label }
                 <path className={connectorClass} d={"M " + (nodeBlock.x - 6) + " " + "0 a 40 40 45 0 0 0 30" } fill="transparent"></path>
                 <EditorNodeBlock
-                    inlineNode={nodeBlock}
-                    selection={this.props.selection}
-                    selectionState={selectionState}/>
+                  inlineNode={nodeBlock}
+                  lineCursor={lineCursor}
+                />
                 {/* <TreeDotCursorSecondary index={idx + 1} listBlock={block} leftPos={nodeBlock.x} topPos={nodeBlock.y + nodeBlock.rowHeight} selection={selection}/> */}
                 <path className={connectorClass} d={"M " + (nodeBlock.x + 2) + " " + "0 a 40 40 45 0 1 0 30" } fill="transparent"></path>
               </React.Fragment>

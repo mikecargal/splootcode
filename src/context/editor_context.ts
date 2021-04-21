@@ -17,6 +17,7 @@ export class EditorState {
     this.editorLayout = new EditorLayout(rootSplootNode);
     let newRootNode = new NodeBlock(null, rootSplootNode, this.selection, 0, false);
     this.selection.setRootNode(newRootNode);
+    this.selection.setEditorLayout(this.editorLayout);
     this.rootNode = newRootNode;
   }
 }

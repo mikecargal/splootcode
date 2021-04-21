@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { observer } from "mobx-react";
-import { NodeSelection, NodeSelectionState } from "../../context/selection";
+import { LineCursor, NodeSelection, NodeSelectionState } from "../../context/selection";
 import { EditorNodeBlock } from './node_block';
 import { InlineChildSet } from '../../layout/inline_childset';
 
@@ -10,15 +10,16 @@ import "./tree_list_block.css";
 interface AttachedChildViewProps {
   leftPos: number;
   inlineChildSet: InlineChildSet;
-  isSelected: boolean;
-  selection: NodeSelection;
+  lineCursor: LineCursor;
 }
 
 @observer
 export class AttachedChildSetRightView extends React.Component<AttachedChildViewProps> {
   render() {
-    let {isSelected, inlineChildSet, leftPos, selection} = this.props;
+    let {lineCursor, inlineChildSet, leftPos} = this.props;
     let topPos = 0;
+
+    let isSelected = false; // TODO;
 
     let allowInsert = true; //block.allowInsert();
 
@@ -41,7 +42,7 @@ export class AttachedChildSetRightView extends React.Component<AttachedChildView
         <line className={connectorClass} x1={leftPos + 1} y1={topPos + 16} x2={bracketLeftPos + 6} y2={topPos + 16} />
         { label }
         <path className={connectorClass} d={"M " + (bracketLeftPos + 9) + " " + topPos + " a 40 40 45 0 0 0 30" } fill="transparent"></path>
-        <EditorNodeBlock inlineNode={child} selection={this.props.selection} selectionState={selectionState}/>
+        <EditorNodeBlock inlineNode={child} lineCursor={lineCursor} />
         <path className={connectorClass} d={"M " + (bracketLeftPos + childWidth + 18) + " " + topPos + " a 40 40 45 0 1 0 30" } fill="transparent"></path>
       </React.Fragment>
     );

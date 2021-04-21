@@ -6,6 +6,8 @@ import { NodeBlock } from "../layout/rendered_node";
 import { InsertBoxData } from "./insert_box";
 import { NodeCategory } from "../language/node_category_registry";
 import { SplootExpression } from "../language/types/js/expression";
+import { Line } from "../layout/line";
+import { EditorLayout } from "../layout/editor_layout";
 
 export enum NodeSelectionState {
   UNSELECTED = 0,
@@ -22,7 +24,59 @@ export enum SelectionState {
   Inserting,
 }
 
+export class LineCursor {
+  stack: {childSetId: string, index: number}[]
+
+  constructor(stack: {childSetId: string, index: number}[]) {
+    if (stack) {
+      this.stack = stack;
+    } else {
+      this.stack = [];
+    }
+  }
+
+  isEmpty() {
+    return this.stack.length === 0;
+  }
+
+  topChildSetId() : string {
+    if (this.isEmpty()) { return null};
+    return this.stack[0].childSetId;
+  }
+
+  peek() : {childSetId: string, index: number} {
+    if (this.stack.length === 0) {
+      return null;
+    }
+    return this.stack[this.stack.length - 1];
+  }
+
+  pop(): LineCursor {
+    return new LineCursor(this.stack.slice(0, ));
+  }
+
+  peekStart() : {childSetId: string, index: number} {
+    return this.stack[0];
+  }
+
+  popStart() : {childSetId: string, index: number} {
+    let result = this.stack[0];
+    this.stack = this.stack.slice(1);
+    return result;
+  }
+
+  push(entry: {childSetId: string, index: number}) {
+    this.stack.push(entry);
+  }
+}
+
 export class NodeSelection {
+  editorLayout: EditorLayout;
+  @observable
+  line: Line;
+  @observable
+  lineCursor: LineCursor;
+
   rootNode: NodeBlock;
   @observable
   cursor: NodeCursor;
@@ -36,6 +90,10 @@ export class NodeSelection {
     this.cursor = null;
     this.insertBox = null;
     this.state = SelectionState.Empty;
+  }
+
+  setEditorLayout(layout: EditorLayout) {
+    this.editorLayout = layout;
   }
 
   setRootNode(rootNode: NodeBlock) {
@@ -52,6 +110,18 @@ export class NodeSelection {
 
   updateRenderPositions() {
     this.rootNode.calculateDimensions(-10, -30, this);
+  }
+
+  selectByCoordinate(x: number, y: number) {
+    let selectedLine : Line = null;
+    for (let line of this.editorLayout.lines) {
+      if (line.y > y) {
+        break;
+      }
+      selectedLine = line;
+    }
+    this.line = selectedLine;
+    this.lineCursor = this.line.getCursorByXCoordinate(x);
   }
 
   @observable
