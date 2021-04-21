@@ -18,7 +18,7 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
   const nodeInlineSpacing = layout.small ? NODE_INLINE_SPACING_SMALL : NODE_INLINE_SPACING;
   let marginRight = 0;
 
-  let leftPos = layout.block? indent + nodeInlineSpacing : indent;
+  let leftPos = layout.block ? indent + nodeInlineSpacing : indent;
   let inlineNode = new InlineNode(node, indent);
 
   // This loop is here to break up the lines, and build inline nodes at the same time.
@@ -56,8 +56,8 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
       let childSet = node.getChildSet(component.identifier);
       let firstNewlineChild = 0;
       if (isLastInlineComponent && childSet.getCount() > 0) {
-        let [inlineNode, childLines] = renderLines(childSet.getChild(0), leftPos);
-        inlineNodes.push(inlineNode);
+        let [childInlineNode, childLines] = renderLines(childSet.getChild(0), leftPos);
+        inlineNodes.push(childInlineNode);
         extraLines = extraLines.concat(childLines);
         firstNewlineChild = 1;
       }
@@ -75,8 +75,8 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
     else if (component.type === LayoutComponentType.CHILD_SET_INLINE) {
       let childNodes = [];
       node.childSets[component.identifier].children.forEach((childNode: SplootNode) => {
-        let [inlineNode, childLines] = renderLines(childNode, leftPos);
-        childNodes.push(inlineNode);
+        let [childInlineNode, childLines] = renderLines(childNode, leftPos);
+        childNodes.push(childInlineNode);
         extraLines = extraLines.concat(childLines);
       });
 
@@ -87,11 +87,11 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
     else if (component.type === LayoutComponentType.CHILD_SET_BREADCRUMBS) {
       let childSet = node.getChildSet(component.identifier);
       if (childSet.getCount() !== 0) {
-        let [inlineNode, childLines] = renderLines(childSet.getChild(0), indent + INDENT);
+        let [childInlineNode, childLines] = renderLines(childSet.getChild(0), indent);
         extraLines = extraLines.concat(childLines);
-        let inlineChildSet = new InlineChildSet(component.type, childSet, [inlineNode]);
+        let inlineChildSet = new InlineChildSet(component.type, childSet, [childInlineNode]);
         leftPos += inlineChildSet.width;
-        inlineNode.addInlineComponent(new RenderedInlineComponent(component, inlineChildSet.width), inlineChildSet);
+        inlineNode.addInlineComponent(new RenderedInlineComponent(component, 0), inlineChildSet);
       } else {
         // TODO: Add breadcrumb node placeholder when childset is empty.
       }

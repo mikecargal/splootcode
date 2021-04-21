@@ -46,7 +46,7 @@ export class InlineNode {
     let type = renderedComponent.layoutComponent.type;
     if (type === LayoutComponentType.CHILD_SET_BREADCRUMBS) {
       this.leftBreadcrumbChildSet = renderedComponent.layoutComponent.identifier;
-      this.marginLeft += renderedComponent.width;
+      this.marginLeft += childSet.width;
     } else if (type === LayoutComponentType.CHILD_SET_ATTACH_RIGHT) {
       this.rightAttachedChildSet = renderedComponent.layoutComponent.identifier;
       this.marginRight += ATTACHED_CHILD_SPACING + childSet.width;

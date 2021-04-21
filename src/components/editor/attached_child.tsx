@@ -3,12 +3,9 @@ import React from 'react'
 import { observer } from "mobx-react";
 import { NodeSelection, NodeSelectionState } from "../../context/selection";
 import { EditorNodeBlock } from './node_block';
+import { InlineChildSet } from '../../layout/inline_childset';
 
 import "./tree_list_block.css";
-import { NodeAttachmentLocation } from '../../language/type_registry';
-import { RenderedChildSetBlock } from '../../layout/rendered_childset_block';
-import { InlineCursor } from './cursor';
-import { InlineChildSet } from '../../layout/inline_childset';
 
 interface AttachedChildViewProps {
   leftPos: number;

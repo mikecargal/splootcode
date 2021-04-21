@@ -16,9 +16,16 @@ export class InlineChildSet {
     this.componentType = componentType;
     this.childSet = childSet;
     this.inlineNodes = inlineNodes;
-    this.width = NODE_INLINE_SPACING;
-    this.inlineNodes.forEach((inlineNode: InlineNode) => {
-      this.width += inlineNode.lineWidth() + NODE_INLINE_SPACING;
-    });
+    this.width = 0;
+    if (componentType === LayoutComponentType.CHILD_SET_BREADCRUMBS) {
+      this.inlineNodes.forEach((inlineNode: InlineNode) => {
+        this.width += inlineNode.lineWidth();
+      });
+    } else {
+      this.width = NODE_INLINE_SPACING;
+      this.inlineNodes.forEach((inlineNode: InlineNode) => {
+        this.width += inlineNode.lineWidth() + NODE_INLINE_SPACING;
+      });
+    }
   }
 }

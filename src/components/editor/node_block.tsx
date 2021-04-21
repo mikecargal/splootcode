@@ -162,8 +162,8 @@ export class EditorNodeBlock extends React.Component<NodeBlockProps> {
       return null;
     }
     let isSelected = selectionState === NodeSelectionState.SELECTED;
-    let childSetBlock = inlineNode.inlineChildSets[inlineNode.leftBreadcrumbChildSet];
-    // return <InlineListBlockView key={'breadcrumbsleft'} isInsideBreadcrumbs={true} block={childSetBlock} isSelected={isSelected} selection={selection}/>;
+    let inlineChildSet = inlineNode.inlineChildSets[inlineNode.leftBreadcrumbChildSet];
+    return <InlineListBlockView key={'breadcrumbsleft'} isInsideBreadcrumbs={true} inlineChildSet={inlineChildSet} isSelected={isSelected} selection={selection}/>;
   }
 
   renderRightAttachedChildSet() : ReactElement {
@@ -172,9 +172,9 @@ export class EditorNodeBlock extends React.Component<NodeBlockProps> {
     if (inlineNode.rightAttachedChildSet === null) {
       return null;
     }
-    let childSetBlock = inlineNode.inlineChildSets[inlineNode.rightAttachedChildSet];
-    if (childSetBlock.componentType === LayoutComponentType.CHILD_SET_ATTACH_RIGHT) {
-      return <AttachedChildSetRightView inlineChildSet={childSetBlock} leftPos={inlineNode.x + inlineNode.blockWidth} isSelected={isSelected} selection={selection}></AttachedChildSetRightView>
+    let inlineChildSet = inlineNode.inlineChildSets[inlineNode.rightAttachedChildSet];
+    if (inlineChildSet.componentType === LayoutComponentType.CHILD_SET_ATTACH_RIGHT) {
+      return <AttachedChildSetRightView inlineChildSet={inlineChildSet} leftPos={inlineNode.x + inlineNode.blockWidth} isSelected={isSelected} selection={selection}></AttachedChildSetRightView>
     }
     return null;
   }
