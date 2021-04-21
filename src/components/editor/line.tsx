@@ -19,7 +19,6 @@ export class LineComponent extends React.Component<LineProps> {
           selection={null}
           selectionState={NodeSelectionState.UNSELECTED}
           isInsideBreadcrumbs={false}
-          onClickHandler={() => {console.log('click')}}
         />
       </g>
     );

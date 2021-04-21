@@ -36,8 +36,7 @@ export class TokenListBlockView extends React.Component<TokenListBlockViewProps>
                 <EditorNodeBlock
                   inlineNode={inlineNode}
                   selection={this.props.selection}
-                  selectionState={NodeSelectionState.UNSELECTED}
-                  onClickHandler={this.onClickByIndex(idx)}/>
+                  selectionState={NodeSelectionState.UNSELECTED}/>
               {/* { allowInsert ? <InlineCursor index={idx} listBlock=
                 <InlineCursor index={idx} listBlock={inlineChildSet} leftPos={nodeBlock.x} topPos={nodeBlock.y} selection={selection}/> */}
               </React.Fragment>
@@ -48,19 +47,5 @@ export class TokenListBlockView extends React.Component<TokenListBlockViewProps>
         {/* <InlineCursor index={nodeCount} listBlock={inlineChildSet} leftPos={inlineChildSet.x + inlineChildSet.width} topPos={inlineChildSet.y} selection={selection}/> */}
       </React.Fragment>
     );
-  }
-
-  onClickByIndex(idx: number) {
-    return (event: React.MouseEvent) => {
-      event.stopPropagation();
-      // let { block } = this.props;
-      // let isSelected = block.getChildSelectionState(idx) === NodeSelectionState.SELECTED;
-      // if (isSelected) {
-      //   // if already selected, go into edit mode
-      //   this.props.selection.editNodeByIndex(block, idx);
-      //   return;
-      // }
-      // this.props.selection.selectNodeByIndex(block, idx);
-    }
   }
 }

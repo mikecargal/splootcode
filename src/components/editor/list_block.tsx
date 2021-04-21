@@ -5,6 +5,7 @@ import { observer } from 'mobx-react';
 import { InlineChildSet } from '../../layout/inline_childset';
 import { InlineNode } from '../../layout/inline_node';
 
+
 import "./list_block.css";
 
 
@@ -30,7 +31,6 @@ export class InlineListBlockView extends React.Component<InlineListBlockViewProp
                   inlineNode={inlineNode}
                   selection={this.props.selection}
                   selectionState={NodeSelectionState.UNSELECTED}
-                  onClickHandler={this.onClickByIndex(idx)}
                   isInsideBreadcrumbs={isInsideBreadcrumbs} />
               {/* { allowInsert ? <InlineCursor index={idx} listBlock={block} leftPos={block.x} topPos={block.y} selection={selection}/> : null} */}
             </React.Fragment>
@@ -39,19 +39,5 @@ export class InlineListBlockView extends React.Component<InlineListBlockViewProp
       }
       {/* { allowInsert ? <InlineCursor index={block.nodes.length} listBlock={block} leftPos={block.x + block.width + 5} topPos={block.y} selection={selection}/> : null } */}
     </React.Fragment>
-  }
-
-  onClickByIndex(idx: number) {
-    return (event: React.MouseEvent) => {
-      event.stopPropagation();
-      // let { block } = this.props;
-      // let isSelected = block.getChildSelectionState(idx) === NodeSelectionState.SELECTED;
-      // if (isSelected) {
-      //   // if already selected, go into edit mode
-      //   this.props.selection.editNodeByIndex(block, idx);
-      //   return;
-      // }
-      // this.props.selection.selectNodeByIndex(block, idx);
-    }
   }
 }

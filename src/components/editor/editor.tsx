@@ -12,6 +12,7 @@ import { Panel } from '../panel';
 import { adaptNodeToPasteDestination, deserializeNode } from '../../language/type_registry';
 import { EditorLayout } from '../../layout/editor_layout';
 import { LineComponent } from './line';
+import { Line } from '../../layout/line';
 
 const SPLOOT_MIME_TYPE = 'application/splootcodenode';
 
@@ -24,6 +25,13 @@ interface EditorProps {
 
 @observer
 export class Editor extends React.Component<EditorProps> {
+  private svgRef: React.RefObject<SVGSVGElement>;
+
+  constructor(props: EditorProps) {
+    super(props);
+    this.svgRef = React.createRef();
+  }
+
   render() {
     let {block, selection, layout} = this.props;
     let fileBody = null;
@@ -40,7 +48,7 @@ export class Editor extends React.Component<EditorProps> {
     }
     return <div className="editor">
       <Panel selection={selection}/>
-      <svg className="editor-svg" xmlns="http://www.w3.org/2000/svg" height={height} preserveAspectRatio="none">
+      <svg className="editor-svg" xmlns="http://www.w3.org/2000/svg" ref={this.svgRef} height={height} preserveAspectRatio="none" onClick={this.clickHandler}>
         {
           layout.lines.map(line => {
             let result = <LineComponent key={line.key} line={line}/>
@@ -50,6 +58,21 @@ export class Editor extends React.Component<EditorProps> {
       </svg>
       { insertBox }
     </div>;
+  }
+
+  clickHandler = (event: React.MouseEvent<SVGElement, MouseEvent>) => {
+    let rect = this.svgRef.current.getBoundingClientRect();
+    let x = event.clientX - rect.left;
+    let y = event.clientY - rect.top;
+    let selectedLine : Line = null;
+    for (let line of this.props.layout.lines) {
+      if (line.y > y) {
+        break;
+      }
+      selectedLine = line;
+    }
+    console.log(x, y);
+    console.log(selectedLine);
   }
 
   clipboardHandler = (event: ClipboardEvent) => {

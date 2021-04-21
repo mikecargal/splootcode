@@ -41,24 +41,10 @@ export class AttachedChildSetRightView extends React.Component<AttachedChildView
         <line className={connectorClass} x1={leftPos + 1} y1={topPos + 16} x2={bracketLeftPos + 6} y2={topPos + 16} />
         { label }
         <path className={connectorClass} d={"M " + (bracketLeftPos + 9) + " " + topPos + " a 40 40 45 0 0 0 30" } fill="transparent"></path>
-        <EditorNodeBlock inlineNode={child} selection={this.props.selection} selectionState={selectionState} onClickHandler={this.onClickByIndex(0)}/>
+        <EditorNodeBlock inlineNode={child} selection={this.props.selection} selectionState={selectionState}/>
         <path className={connectorClass} d={"M " + (bracketLeftPos + childWidth + 18) + " " + topPos + " a 40 40 45 0 1 0 30" } fill="transparent"></path>
       </React.Fragment>
     );
-  }
-
-  onClickByIndex(idx: number) {
-    return (event: React.MouseEvent) => {
-      event.stopPropagation();
-      // let { block } = this.props;
-      // let isSelected = block.getChildSelectionState(idx) === NodeSelectionState.SELECTED;
-      // if (isSelected) {
-      //   // if already selected, go into edit mode
-      //   this.props.selection.editNodeByIndex(block, idx);
-      //   return;
-      // }
-      // this.props.selection.selectNodeByIndex(block, idx);
-    }
   }
 }
 

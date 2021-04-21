@@ -20,7 +20,6 @@ interface NodeBlockProps {
   selection: NodeSelection;
   selectionState: NodeSelectionState;
   isInsideBreadcrumbs?: boolean;
-  onClickHandler: (event: React.MouseEvent) => void;
 }
 
 function getBreadcrumbStartShapePath(x: number, y: number, width: number) : string {
@@ -72,7 +71,7 @@ function getBreadcrumbMiddleShapePath(x: number, y: number, width: number) : str
 export class EditorNodeBlock extends React.Component<NodeBlockProps> {
   
   render() {
-    let {inlineNode, selection, selectionState, onClickHandler} = this.props;
+    let {inlineNode, selection, selectionState} = this.props;
     let isSelected = selectionState === NodeSelectionState.SELECTED;
 
     if (inlineNode === null) {
@@ -88,19 +87,19 @@ export class EditorNodeBlock extends React.Component<NodeBlockProps> {
     if (inlineNode.block) {
       if (this.props.isInsideBreadcrumbs) {
         if (inlineNode.leftBreadcrumbChildSet) {
-          shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbMiddleShapePath(leftPos + 1, topPos + 1, width)} onClick={onClickHandler} />
+          shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbMiddleShapePath(leftPos + 1, topPos + 1, width)}/>
         } else {
-          shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbStartShapePath(leftPos + 1, topPos + 1, width)} onClick={onClickHandler} />
+          shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbStartShapePath(leftPos + 1, topPos + 1, width)}/>
         }
       } else {
         if (inlineNode.leftBreadcrumbChildSet) {
-          shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbEndShapePath(leftPos + 1, topPos + 1, width)} onClick={onClickHandler} />
+          shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbEndShapePath(leftPos + 1, topPos + 1, width)}/>
         } else {
           if (inlineNode.isSmall()) {
-            shape = <rect className={"svgsplootnode" + (isSelected ? " selected" : "")} x={leftPos + 1} y={topPos + 5} height="21" width={width} rx="4" onClick={onClickHandler} />
+            shape = <rect className={"svgsplootnode" + (isSelected ? " selected" : "")} x={leftPos + 1} y={topPos + 5} height="21" width={width} rx="4"/>
             internalLeftPos = leftPos + 8;
           } else {
-            shape = <rect className={"svgsplootnode" + (isSelected ? " selected" : "")} x={leftPos + 1} y={topPos + 1} height="28" width={width} rx="4" onClick={onClickHandler} />
+            shape = <rect className={"svgsplootnode" + (isSelected ? " selected" : "")} x={leftPos + 1} y={topPos + 1} height="28" width={width} rx="4"/>
           }
         }
       }  
