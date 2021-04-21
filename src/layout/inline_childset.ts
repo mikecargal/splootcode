@@ -6,7 +6,6 @@ import { NODE_INLINE_SPACING } from "./rendered_node";
 
 
 export class InlineChildSet {
-  x: number;
   childSet: ChildSet;
   inlineNodes: InlineNode[];
   componentType: LayoutComponentType;
@@ -19,7 +18,7 @@ export class InlineChildSet {
     this.inlineNodes = inlineNodes;
     this.width = NODE_INLINE_SPACING;
     this.inlineNodes.forEach((inlineNode: InlineNode) => {
-      this.width += inlineNode.width;
+      this.width += inlineNode.lineWidth() + NODE_INLINE_SPACING;
     });
   }
 }

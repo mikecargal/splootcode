@@ -10,11 +10,13 @@ import { getColour } from "./colors";
 
 export const NODE_INLINE_SPACING = 8;
 export const NODE_INLINE_SPACING_SMALL = 6;
+export const TREE_CHILDREN_DOT_SIZE = 20;
+export const ATTACHED_CHILD_SPACING = 10;
 export const NODE_BLOCK_HEIGHT = 30;
-export const NODE_BLOCK_SPACING = 4;
+export const NODE_BLOCK_SPACING = 2;
 export const TOP_LEVEL_INDENT = 10;
-export const INDENT = 30;
-export const END_BLOCK_SPACING = 10;
+export const INDENT = 24;
+export const END_BLOCK_SPACING = 16;
 
 export class RenderedParentRef {
   node: NodeBlock;

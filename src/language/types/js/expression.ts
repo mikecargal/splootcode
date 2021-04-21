@@ -145,8 +145,8 @@ export class SplootExpression extends JavaScriptSplootNode {
     typeRegistration.properties = ['tokens'];
     typeRegistration.childSets = {'tokens': NodeCategory.ExpressionToken};
     typeRegistration.layout = new NodeLayout(HighlightColorCategory.NONE, [
-      new LayoutComponent(LayoutComponentType.CHILD_SET_TOKEN_LIST, 'tokens'),    
-    ]);
+      new LayoutComponent(LayoutComponentType.CHILD_SET_TOKEN_LIST, 'tokens'),   
+    ], false, false);
     typeRegistration.pasteAdapters[HTML_SCRIPT_ElEMENT] = (node: SplootNode) => {
       let scriptEl = new SplootHtmlScriptElement(null);
       scriptEl.getContent().addChild(node);

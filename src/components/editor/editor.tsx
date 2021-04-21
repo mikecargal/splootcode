@@ -4,7 +4,6 @@ import { NodeBlock } from '../../layout/rendered_node';
 import "./editor.css";
 import { NodeSelection, SelectionState } from '../../context/selection';
 import { observer } from 'mobx-react';
-import { ExpandedListBlockView } from './list_block';
 import { InsertBox } from './insert_box';
 import { JAVASCRIPT_FILE } from '../../language/types/js/javascript_file';
 import { HTML_DOCUMENT } from '../../language/types/html/html_document';

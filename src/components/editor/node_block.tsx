@@ -1,18 +1,18 @@
 import React, { ReactElement } from 'react'
 import { NodeBlock, RenderedInlineComponent } from '../../layout/rendered_node';
-import { ExpandedListBlockView, InlineListBlockView } from './list_block';
+import { InlineListBlockView } from './list_block';
 import { NodeSelection, NodeSelectionState } from '../../context/selection';
 import { InlineStringLiteral } from './string_literal';
 import { InlineProperty } from './property';
-import { SplootExpressionView } from './expression';
 import { LayoutComponent, LayoutComponentType } from '../../language/type_registry';
 import { TreeListBlockBracketsView, TreeListBlockView } from './tree_list_block';
-import { AttachedChildRightExpressionView } from './attached_child';
+import { AttachedChildSetRightView } from './attached_child';
 import { SPLOOT_EXPRESSION } from '../../language/types/js/expression';
 
 import "./node_block.css";
 import { observer } from 'mobx-react';
 import { InlineNode } from '../../layout/inline_node';
+import { TokenListBlockView } from './token_list_block';
 
 
 interface NodeBlockProps {
@@ -79,36 +79,33 @@ export class EditorNodeBlock extends React.Component<NodeBlockProps> {
       return null;
     }
 
-    let width = inlineNode.width;
+    let width = inlineNode.blockWidth;
     let leftPos = inlineNode.x + inlineNode.marginLeft;
     let topPos = 0;
     let internalLeftPos = leftPos + 10;
 
-    if (inlineNode.node.type === SPLOOT_EXPRESSION) {
-      // return <SplootExpressionView block={block} selection={selection} selectionState={selectionState}/>
-      return null;
-    }
-
     let shape : ReactElement;
-    if (this.props.isInsideBreadcrumbs) {
-      if (inlineNode.leftBreadcrumbChildSet) {
-        shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbMiddleShapePath(leftPos + 1, topPos + 1, width)} onClick={onClickHandler} />
-      } else {
-        shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbStartShapePath(leftPos + 1, topPos + 1, width)} onClick={onClickHandler} />
-      }
-    } else {
-      if (inlineNode.leftBreadcrumbChildSet) {
-        shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbEndShapePath(leftPos + 1, topPos + 1, width)} onClick={onClickHandler} />
-      } else {
-        if (inlineNode.isSmall()) {
-          shape = <rect className={"svgsplootnode" + (isSelected ? " selected" : "")} x={leftPos + 1} y={topPos + 5} height="21" width={width} rx="4" onClick={onClickHandler} />
-          internalLeftPos = leftPos + 8;
+    if (inlineNode.block) {
+      if (this.props.isInsideBreadcrumbs) {
+        if (inlineNode.leftBreadcrumbChildSet) {
+          shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbMiddleShapePath(leftPos + 1, topPos + 1, width)} onClick={onClickHandler} />
         } else {
-          shape = <rect className={"svgsplootnode" + (isSelected ? " selected" : "")} x={leftPos + 1} y={topPos + 1} height="28" width={width} rx="4" onClick={onClickHandler} />
+          shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbStartShapePath(leftPos + 1, topPos + 1, width)} onClick={onClickHandler} />
         }
-      }
+      } else {
+        if (inlineNode.leftBreadcrumbChildSet) {
+          shape = <path className={"svgsplootnode" + (isSelected ? " selected" : "")} d={getBreadcrumbEndShapePath(leftPos + 1, topPos + 1, width)} onClick={onClickHandler} />
+        } else {
+          if (inlineNode.isSmall()) {
+            shape = <rect className={"svgsplootnode" + (isSelected ? " selected" : "")} x={leftPos + 1} y={topPos + 5} height="21" width={width} rx="4" onClick={onClickHandler} />
+            internalLeftPos = leftPos + 8;
+          } else {
+            shape = <rect className={"svgsplootnode" + (isSelected ? " selected" : "")} x={leftPos + 1} y={topPos + 1} height="28" width={width} rx="4" onClick={onClickHandler} />
+          }
+        }
+      }  
     }
-
+    
     return  <React.Fragment>
         { this.renderLeftAttachedBreadcrumbsChildSet() }
         { shape }
@@ -127,18 +124,23 @@ export class EditorNodeBlock extends React.Component<NodeBlockProps> {
               internalLeftPos += renderedComponent.width;
             }
             else if (renderedComponent.layoutComponent.type === LayoutComponentType.CHILD_SET_TREE_BRACKETS) {
-              let childSetBlock = inlineNode.inlineChildSets[renderedComponent.layoutComponent.identifier];
-              // result = <TreeListBlockBracketsView key={idx} block={childSetBlock} isSelected={isSelected} selection={this.props.selection}/>
+              let inlineChildSet = inlineNode.inlineChildSets[renderedComponent.layoutComponent.identifier];
+              result = <TreeListBlockBracketsView key={idx} leftPos={internalLeftPos} inlineChildSet={inlineChildSet} isSelected={isSelected} selection={this.props.selection}/>
               internalLeftPos += renderedComponent.width;
             }
             else if (renderedComponent.layoutComponent.type === LayoutComponentType.CHILD_SET_TREE) {
-              let childSetBlock = inlineNode.inlineChildSets[renderedComponent.layoutComponent.identifier];
-              // result = <TreeListBlockView key={idx} block={childSetBlock} isSelected={isSelected} selection={this.props.selection}/>
+              let inlineChildSet = inlineNode.inlineChildSets[renderedComponent.layoutComponent.identifier];
+              result = <TreeListBlockView key={idx} leftPos={internalLeftPos} inlineChildSet={inlineChildSet} isSelected={isSelected} selection={this.props.selection}/>
               internalLeftPos += renderedComponent.width;
             }
             else if (renderedComponent.layoutComponent.type === LayoutComponentType.CHILD_SET_INLINE) {
               let inlineChildSet = inlineNode.inlineChildSets[renderedComponent.layoutComponent.identifier];
               result = <InlineListBlockView key={idx} inlineChildSet={inlineChildSet} isSelected={isSelected} selection={this.props.selection}/>
+              internalLeftPos += renderedComponent.width;
+            }
+            else if (renderedComponent.layoutComponent.type === LayoutComponentType.CHILD_SET_TOKEN_LIST) {
+              let inlineChildSet = inlineNode.inlineChildSets[renderedComponent.layoutComponent.identifier];
+              result = <TokenListBlockView key={idx} inlineChildSet={inlineChildSet} isSelected={isSelected} selection={this.props.selection}/>
               internalLeftPos += renderedComponent.width;
             }
             else {
@@ -172,7 +174,7 @@ export class EditorNodeBlock extends React.Component<NodeBlockProps> {
     }
     let childSetBlock = inlineNode.inlineChildSets[inlineNode.rightAttachedChildSet];
     if (childSetBlock.componentType === LayoutComponentType.CHILD_SET_ATTACH_RIGHT) {
-      // return <AttachedChildRightExpressionView block={childSetBlock} isSelected={isSelected} selection={selection}></AttachedChildRightExpressionView>
+      return <AttachedChildSetRightView inlineChildSet={childSetBlock} leftPos={inlineNode.x + inlineNode.blockWidth} isSelected={isSelected} selection={selection}></AttachedChildSetRightView>
     }
     return null;
   }

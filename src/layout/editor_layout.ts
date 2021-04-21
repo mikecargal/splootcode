@@ -1,7 +1,7 @@
 import { SplootNode } from "../language/node";
 import { LayoutComponent, LayoutComponentType } from "../language/type_registry";
 import { stringWidth } from "./rendered_childset_block";
-import { END_BLOCK_SPACING, INDENT, NODE_BLOCK_HEIGHT, NODE_BLOCK_SPACING, NODE_INLINE_SPACING, NODE_INLINE_SPACING_SMALL, RenderedInlineComponent, TOP_LEVEL_INDENT } from "./rendered_node";
+import { ATTACHED_CHILD_SPACING, END_BLOCK_SPACING, INDENT, NODE_BLOCK_HEIGHT, NODE_BLOCK_SPACING, NODE_INLINE_SPACING, NODE_INLINE_SPACING_SMALL, RenderedInlineComponent, TOP_LEVEL_INDENT, TREE_CHILDREN_DOT_SIZE } from "./rendered_node";
 import { InlineNode } from "./inline_node";
 import { Line } from "./line";
 import { InlineChildSet } from "./inline_childset";
@@ -18,7 +18,7 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
   const nodeInlineSpacing = layout.small ? NODE_INLINE_SPACING_SMALL : NODE_INLINE_SPACING;
   let marginRight = 0;
 
-  let leftPos = indent + nodeInlineSpacing;
+  let leftPos = layout.block? indent + nodeInlineSpacing : indent;
   let inlineNode = new InlineNode(node, indent);
 
   // This loop is here to break up the lines, and build inline nodes at the same time.
@@ -50,15 +50,26 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
       inlineNode.addInlineComponent(new RenderedInlineComponent(component, width));
     }
     else if (component.type === LayoutComponentType.CHILD_SET_TREE || component.type === LayoutComponentType.CHILD_SET_TREE_BRACKETS) {
-      let width = 20;
-      leftPos += width;
-
-      // TODO: If isLastInlineComponet add first child to this list of inline nodes.
-      let inlineChildSet = new InlineChildSet(component.type, node.getChildSet(component.identifier), []);
-      if (isLastInlineComponent) {
-        // TODO: Handle child set trees.
-        // use leftPos as basis for indent to pass to children.
+      let width = TREE_CHILDREN_DOT_SIZE;
+      leftPos += width + NODE_INLINE_SPACING + ATTACHED_CHILD_SPACING; // TODO: Add width of tree lables here
+      let inlineNodes = [];
+      let childSet = node.getChildSet(component.identifier);
+      let firstNewlineChild = 0;
+      if (isLastInlineComponent && childSet.getCount() > 0) {
+        let [inlineNode, childLines] = renderLines(childSet.getChild(0), leftPos);
+        inlineNodes.push(inlineNode);
+        extraLines = extraLines.concat(childLines);
+        firstNewlineChild = 1;
       }
+      node.childSets[component.identifier].children.forEach((childNode: SplootNode, idx: number) => {
+        if (idx < firstNewlineChild) {
+          return;
+        }
+        let [inlineNode, childLines] = renderLines(childNode, leftPos);
+        extraLines.push(new Line(inlineNode));
+        extraLines = extraLines.concat(childLines);
+      });
+      let inlineChildSet = new InlineChildSet(component.type, node.getChildSet(component.identifier), inlineNodes);
       inlineNode.addInlineComponent(new RenderedInlineComponent(component, width), inlineChildSet);
     }
     else if (component.type === LayoutComponentType.CHILD_SET_INLINE) {
@@ -80,32 +91,42 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
         extraLines = extraLines.concat(childLines);
         let inlineChildSet = new InlineChildSet(component.type, childSet, [inlineNode]);
         leftPos += inlineChildSet.width;
+        inlineNode.addInlineComponent(new RenderedInlineComponent(component, inlineChildSet.width), inlineChildSet);
       } else {
         // TODO: Add breadcrumb node placeholder when childset is empty.
       }
     }
     else if (component.type === LayoutComponentType.CHILD_SET_ATTACH_RIGHT) {
-      // TODO;
+      // Only ever 0 or 1 child.
+      leftPos += NODE_INLINE_SPACING + ATTACHED_CHILD_SPACING;
+      let childSet = node.getChildSet(component.identifier);
+      let inlineNodes = [];
+      if (childSet.getCount() !== 0) {
+        let [inlineNode, childLines] = renderLines(childSet.getChild(0), leftPos);
+        extraLines = extraLines.concat(childLines);
+        inlineNodes = [inlineNode];
+      }
+      let inlineChildSet = new InlineChildSet(component.type, childSet, inlineNodes);
+      inlineNode.addInlineComponent(new RenderedInlineComponent(component, 0), inlineChildSet);
+      leftPos += inlineChildSet.width;
     }
-    else {
+    else if (component.type === LayoutComponentType.CHILD_SET_TOKEN_LIST) {
+      let childNodes = [];
+      node.childSets[component.identifier].children.forEach((childNode: SplootNode) => {
+        let [inlineNode, childLines] = renderLines(childNode, leftPos);
+        childNodes.push(inlineNode);
+        leftPos += inlineNode.lineWidth() + NODE_INLINE_SPACING;
+        extraLines = extraLines.concat(childLines);
+      });
+      let inlineChildSet = new InlineChildSet(component.type, node.getChildSet(component.identifier), childNodes);
+      
+      inlineNode.addInlineComponent(new RenderedInlineComponent(component, inlineChildSet.width), inlineChildSet);
+    } else {
       let width = stringWidth(component.identifier) + nodeInlineSpacing;
       leftPos += width;
       inlineNode.addInlineComponent(new RenderedInlineComponent(component, width));
     }            
   });
-
-  if (node.type === SPLOOT_EXPRESSION) {
-    /*
-    // TODO: Expressions
-    let childSetBlock = this.renderedChildSets['tokens'];
-    childSetBlock.calculateDimensions(x, y, selection);
-    marginRight = this.renderedChildSets['tokens'].width;
-    this.blockWidth = 0;
-    this.rowHeight = Math.max(this.rowHeight, childSetBlock.height);
-    */
-  }
-  // this.rowWidth = this.marginLeft + this.blockWidth + marginRight;
-
   return [inlineNode, extraLines];
 }
 
@@ -116,7 +137,6 @@ export class EditorLayout {
     let [inlineNode, extraLines] = renderLines(rootNode, TOP_LEVEL_INDENT-INDENT);
     this.lines = extraLines;
     this.calculateYCoordinates();
-    console.log(this.lines);
   }
 
   calculateYCoordinates() {

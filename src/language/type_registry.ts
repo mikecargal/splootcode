@@ -25,11 +25,13 @@ export class NodeLayout {
   color: HighlightColorCategory;
   components: LayoutComponent[];
   small: boolean;
+  block: boolean;
 
-  constructor(color: HighlightColorCategory, layoutComponents: LayoutComponent[], small: boolean = false) {
+  constructor(color: HighlightColorCategory, layoutComponents: LayoutComponent[], small: boolean = false, block: boolean = true) {
     this.color = color;
     this.components = layoutComponents;
     this.small = small;
+    this.block = block;
   }
 }
 
