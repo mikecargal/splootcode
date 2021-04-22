@@ -1,5 +1,5 @@
 import { LineCursor } from "../context/selection";
-import { ChildSet } from "../language/childset";
+import { ChildSet, ChildSetType } from "../language/childset";
 import { ChildSetMutation } from "../language/mutations/child_set_mutations";
 import { LayoutComponentType } from "../language/type_registry";
 import { InlineNode } from "./inline_node";
@@ -35,6 +35,10 @@ export class InlineChildSet {
     }
   }
 
+  allowInsert() : boolean {
+    return this.childSet.type === ChildSetType.Many || (this.childSet.getCount() === 0);
+  }
+
   getCursorByXCoordinate(lineCursor: LineCursor, x: number) : LineCursor {
     if (this.inlineNodes.length === 0) {
       // If no children, put cursor in 0th position.
@@ -44,7 +48,7 @@ export class InlineChildSet {
     let index = 0;
     for (let node of this.inlineNodes) {
       let comp = node.compareToX(x);
-      if (comp === -1) {
+      if (comp === -1 && this.allowInsert()) {
         // X is before this node, place as a cursor
         return lineCursor.pushCursor({childSetId: this.childSetId, index: index});
       } else if (comp === 0) {
@@ -53,6 +57,10 @@ export class InlineChildSet {
       index += 1;
     }
     // Return cursor after the last node
-    return lineCursor.pushCursor({childSetId: this.childSetId, index: index});
+    if (this.allowInsert()) {
+      return lineCursor.pushCursor({childSetId: this.childSetId, index: index});
+    }
+    // Insert is not allowed and there are no matching child nodes, select parent node.
+    return lineCursor;
   }
 }

@@ -113,6 +113,7 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
     else if (component.type === LayoutComponentType.CHILD_SET_TOKEN_LIST) {
       let childNodes = [];
       let childSetx = leftPos;
+      leftPos += NODE_INLINE_SPACING
       node.childSets[component.identifier].children.forEach((childNode: SplootNode) => {
         let [inlineNode, childLines] = renderLines(childNode, leftPos);
         childNodes.push(inlineNode);

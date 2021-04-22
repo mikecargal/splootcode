@@ -1,15 +1,14 @@
 import React from 'react'
 
 import { observer } from "mobx-react";
-import { LineCursor, NodeSelection, NodeSelectionState } from "../../context/selection";
-import { NodeBlock } from "../../layout/rendered_node";
+import { LineCursor } from "../../context/selection";
 import { EditorNodeBlock } from './node_block';
-
-import "./tree_list_block.css";
-import { CursorBar, InlineCursor } from './cursor';
-import { RenderedChildSetBlock } from '../../layout/rendered_childset_block';
+import { CursorBar } from './cursor';
 import { InlineNode } from '../../layout/inline_node';
 import { InlineChildSet } from '../../layout/inline_childset';
+
+import "./tree_list_block.css";
+
 
 interface TokenListBlockViewProps {
     inlineChildSet: InlineChildSet;

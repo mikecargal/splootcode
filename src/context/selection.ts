@@ -1,4 +1,3 @@
-
 import { SplootNode } from "../language/node";
 import { action, observable, computed } from "mobx";
 import { RenderedChildSetBlock } from "../layout/rendered_childset_block";
