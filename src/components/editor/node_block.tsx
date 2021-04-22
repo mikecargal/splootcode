@@ -138,7 +138,7 @@ export class EditorNodeBlock extends React.Component<NodeBlockProps> {
             }
             else if (renderedComponent.layoutComponent.type === LayoutComponentType.CHILD_SET_TOKEN_LIST) {
               let inlineChildSet = inlineNode.inlineChildSets[renderedComponent.layoutComponent.identifier];
-              result = <TokenListBlockView key={idx} inlineChildSet={inlineChildSet} isSelected={isSelected} lineCursor={lineCursor} />
+              result = <TokenListBlockView key={idx} inlineChildSet={inlineChildSet} lineCursor={lineCursor} />
               internalLeftPos += renderedComponent.width;
             }
             else {

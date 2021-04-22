@@ -8,6 +8,7 @@ import { NODE_INLINE_SPACING } from "./rendered_node";
 
 
 export class InlineChildSet {
+  x: number;
   childSetId: string;
   childSet: ChildSet;
   inlineNodes: InlineNode[];
@@ -15,7 +16,8 @@ export class InlineChildSet {
 
   width: number;
 
-  constructor(componentType: LayoutComponentType, childSet: ChildSet, inlineNodes: InlineNode[]) {
+  constructor(componentType: LayoutComponentType, childSet: ChildSet, inlineNodes: InlineNode[], x: number) {
+    this.x = x;
     this.componentType = componentType;
     this.childSet = childSet;
     this.childSetId = this.childSet.childParentRef.childSetId;

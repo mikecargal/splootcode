@@ -69,7 +69,7 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
         extraLines.push(new Line(inlineNode));
         extraLines = extraLines.concat(childLines);
       });
-      let inlineChildSet = new InlineChildSet(component.type, node.getChildSet(component.identifier), inlineNodes);
+      let inlineChildSet = new InlineChildSet(component.type, node.getChildSet(component.identifier), inlineNodes, leftPos);
       inlineNode.addInlineComponent(new RenderedInlineComponent(component, width), inlineChildSet);
     }
     else if (component.type === LayoutComponentType.CHILD_SET_INLINE) {
@@ -80,7 +80,7 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
         extraLines = extraLines.concat(childLines);
       });
 
-      let inlineChildSet = new InlineChildSet(component.type, node.getChildSet(component.identifier), childNodes);
+      let inlineChildSet = new InlineChildSet(component.type, node.getChildSet(component.identifier), childNodes, leftPos);
       leftPos += inlineChildSet.width;
       inlineNode.addInlineComponent(new RenderedInlineComponent(component, inlineChildSet.width), inlineChildSet);
     }
@@ -89,7 +89,7 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
       if (childSet.getCount() !== 0) {
         let [childInlineNode, childLines] = renderLines(childSet.getChild(0), indent);
         extraLines = extraLines.concat(childLines);
-        let inlineChildSet = new InlineChildSet(component.type, childSet, [childInlineNode]);
+        let inlineChildSet = new InlineChildSet(component.type, childSet, [childInlineNode], leftPos);
         leftPos += inlineChildSet.width;
         inlineNode.addInlineComponent(new RenderedInlineComponent(component, 0), inlineChildSet);
       } else {
@@ -106,19 +106,20 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
         extraLines = extraLines.concat(childLines);
         inlineNodes = [inlineNode];
       }
-      let inlineChildSet = new InlineChildSet(component.type, childSet, inlineNodes);
+      let inlineChildSet = new InlineChildSet(component.type, childSet, inlineNodes, leftPos);
       inlineNode.addInlineComponent(new RenderedInlineComponent(component, 0), inlineChildSet);
       leftPos += inlineChildSet.width;
     }
     else if (component.type === LayoutComponentType.CHILD_SET_TOKEN_LIST) {
       let childNodes = [];
+      let childSetx = leftPos;
       node.childSets[component.identifier].children.forEach((childNode: SplootNode) => {
         let [inlineNode, childLines] = renderLines(childNode, leftPos);
         childNodes.push(inlineNode);
         leftPos += inlineNode.lineWidth() + NODE_INLINE_SPACING;
         extraLines = extraLines.concat(childLines);
       });
-      let inlineChildSet = new InlineChildSet(component.type, node.getChildSet(component.identifier), childNodes);
+      let inlineChildSet = new InlineChildSet(component.type, node.getChildSet(component.identifier), childNodes, childSetx);
       
       inlineNode.addInlineComponent(new RenderedInlineComponent(component, inlineChildSet.width), inlineChildSet);
     } else {

@@ -7,6 +7,19 @@ import { observer } from 'mobx-react';
 import { LayoutComponentType } from '../../language/type_registry';
 
 
+interface CursorBarProps {
+  y: number;
+  x: number;
+}
+
+export class CursorBar extends React.Component<CursorBarProps> {
+  render() {
+    let {x, y} = this.props;
+    return <line className="active-inline-cursor" x1={x} x2={x} y1={y + 2} y2={y + 28}></line>
+  }
+}
+
+
 interface CursorProps {
   listBlock: RenderedChildSetBlock;
   index: number;

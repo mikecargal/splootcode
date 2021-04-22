@@ -24,7 +24,7 @@ export class AttachedChildSetRightView extends React.Component<AttachedChildView
     let cursorPos = -1;
     let childLineCursor = null;
     if (lineCursor && lineCursor.baseChildSetId() === inlineChildSet.childSetId) {
-      if (lineCursor.cursor) {
+      if (lineCursor.isCurrentLevelCursor()) {
         cursorPos = lineCursor.baseIndex();
       } else {
         selectedNode = lineCursor.baseIndex();

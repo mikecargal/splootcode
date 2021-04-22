@@ -41,6 +41,10 @@ export class LineCursor {
     return this.stack.length === 0;
   }
 
+  isCurrentLevelCursor() {
+    return this.cursor && this.stack.length === 1;
+  }
+
   baseChildSetId() : string {
     if (this.isEmpty()) { return null};
     return this.stack[0].childSetId;
@@ -117,6 +121,7 @@ export class NodeSelection {
     this.line = selectedLine;
     this.lastX = x;
     this.lineCursor = this.line.getCursorByXCoordinate(x);
+    console.log(this.lineCursor);
   }
 
   @observable

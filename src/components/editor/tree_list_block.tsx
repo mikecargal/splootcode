@@ -28,7 +28,7 @@ export class TreeListBlockView extends React.Component<TreeListBlockViewProps> {
     let cursorPos = -1;
     let childLineCursor = null;
     if (lineCursor && lineCursor.baseChildSetId() === inlineChildSet.childSetId) {
-      if (lineCursor.cursor) {
+      if (lineCursor.isCurrentLevelCursor()) {
         cursorPos = lineCursor.baseIndex();
       } else {
         selectedNode = lineCursor.baseIndex();
@@ -93,7 +93,7 @@ export class TreeListBlockBracketsView extends React.Component<TreeListBlockView
     let cursorPos = -1;
     let childLineCursor = null;
     if (lineCursor && lineCursor.baseChildSetId() === inlineChildSet.childSetId) {
-      if (lineCursor.cursor) {
+      if (lineCursor.isCurrentLevelCursor()) {
         cursorPos = lineCursor.baseIndex();
       } else {
         selectedNode = lineCursor.baseIndex();
