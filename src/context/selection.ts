@@ -25,48 +25,41 @@ export enum SelectionState {
 }
 
 export class LineCursor {
-  stack: {childSetId: string, index: number}[]
+  stack: {childSetId: string, index: number}[];
+  cursor: boolean;
 
-  constructor(stack: {childSetId: string, index: number}[]) {
+  constructor(stack: {childSetId: string, index: number}[], cursor: boolean) {
     if (stack) {
       this.stack = stack;
     } else {
       this.stack = [];
     }
+    this.cursor = cursor;
   }
 
   isEmpty() {
     return this.stack.length === 0;
   }
 
-  topChildSetId() : string {
+  baseChildSetId() : string {
     if (this.isEmpty()) { return null};
     return this.stack[0].childSetId;
   }
 
-  peek() : {childSetId: string, index: number} {
-    if (this.stack.length === 0) {
-      return null;
-    }
-    return this.stack[this.stack.length - 1];
+  baseIndex() : number {
+    return this.stack[0].index;
   }
 
-  pop(): LineCursor {
-    return new LineCursor(this.stack.slice(0, ));
+  pushSelectedNode(entry: {childSetId: string, index: number}) : LineCursor {
+    return new LineCursor(this.stack.concat([entry]), false);
   }
 
-  peekStart() : {childSetId: string, index: number} {
-    return this.stack[0];
+  pushCursor(entry: {childSetId: string, index: number}) : LineCursor {
+    return new LineCursor(this.stack.concat([entry]), true);
   }
 
-  popStart() : {childSetId: string, index: number} {
-    let result = this.stack[0];
-    this.stack = this.stack.slice(1);
-    return result;
-  }
-
-  push(entry: {childSetId: string, index: number}) {
-    this.stack.push(entry);
+  popBase() : LineCursor {
+    return new LineCursor(this.stack.slice(1), this.cursor);
   }
 }
 
@@ -76,6 +69,7 @@ export class NodeSelection {
   line: Line;
   @observable
   lineCursor: LineCursor;
+  lastX: number;
 
   rootNode: NodeBlock;
   @observable
@@ -121,6 +115,7 @@ export class NodeSelection {
       selectedLine = line;
     }
     this.line = selectedLine;
+    this.lastX = x;
     this.lineCursor = this.line.getCursorByXCoordinate(x);
   }
 
@@ -216,12 +211,32 @@ export class NodeSelection {
 
   @action
   moveKeyDown() {
-    console.log('down');
+    let y = this.line.y;
+    let selectedLine : Line = null;
+    for (let line of this.editorLayout.lines) {
+      if (line.y > y) {
+        selectedLine = line;
+        break;
+      }
+      selectedLine = line;
+    }
+    this.lineCursor = selectedLine.getCursorByXCoordinate(this.lastX);
+    this.line = selectedLine;
   }
 
   @action
   moveKeyUp() {
-    console.log('up');
+    let y = this.line.y - 1;
+    let selectedLine : Line = null;
+    for (let line of this.editorLayout.lines) {
+      if (line.y > y) {
+        break;
+      }
+      selectedLine = line;
+    }
+
+    this.lineCursor = selectedLine.getCursorByXCoordinate(this.lastX);
+    this.line = selectedLine;
   }
 
   @action

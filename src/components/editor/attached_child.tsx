@@ -20,6 +20,17 @@ export class AttachedChildSetRightView extends React.Component<AttachedChildView
     let topPos = 0;
 
     let isSelected = false; // TODO;
+    let selectedNode = -1;
+    let cursorPos = -1;
+    let childLineCursor = null;
+    if (lineCursor && lineCursor.baseChildSetId() === inlineChildSet.childSetId) {
+      if (lineCursor.cursor) {
+        cursorPos = lineCursor.baseIndex();
+      } else {
+        selectedNode = lineCursor.baseIndex();
+        childLineCursor = lineCursor.popBase();
+      }
+    }
 
     let allowInsert = true; //block.allowInsert();
 
@@ -42,7 +53,7 @@ export class AttachedChildSetRightView extends React.Component<AttachedChildView
         <line className={connectorClass} x1={leftPos + 1} y1={topPos + 16} x2={bracketLeftPos + 6} y2={topPos + 16} />
         { label }
         <path className={connectorClass} d={"M " + (bracketLeftPos + 9) + " " + topPos + " a 40 40 45 0 0 0 30" } fill="transparent"></path>
-        <EditorNodeBlock inlineNode={child} lineCursor={lineCursor} />
+        <EditorNodeBlock inlineNode={child} lineCursor={childLineCursor} />
         <path className={connectorClass} d={"M " + (bracketLeftPos + childWidth + 18) + " " + topPos + " a 40 40 45 0 1 0 30" } fill="transparent"></path>
       </React.Fragment>
     );

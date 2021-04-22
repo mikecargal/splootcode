@@ -20,16 +20,28 @@ interface InlineListBlockViewProps {
 export class InlineListBlockView extends React.Component<InlineListBlockViewProps> {
   render() {
     let {inlineChildSet, lineCursor, isInsideBreadcrumbs} = this.props;
+    let selectedNode = -1;
+    let cursorPos = -1;
+    let childLineCursor = null;
+    if (lineCursor && lineCursor.baseChildSetId() === inlineChildSet.childSetId) {
+      if (lineCursor.cursor) {
+        cursorPos = lineCursor.baseIndex();
+      } else {
+        selectedNode = lineCursor.baseIndex();
+        childLineCursor = lineCursor.popBase();
+      }
+    }
     // let allowInsert = block.allowInsert();
     return <React.Fragment>
       {
         inlineChildSet.inlineNodes.map((inlineNode : InlineNode, idx: number) => {
           //let selectionState = block.getChildSelectionState(idx);
+          let cursor = (idx === selectedNode) ? childLineCursor : null;
           return (
             <React.Fragment>
               <EditorNodeBlock
                   inlineNode={inlineNode}
-                  lineCursor={lineCursor}
+                  lineCursor={cursor}
                   isInsideBreadcrumbs={isInsideBreadcrumbs} />
               {/* { allowInsert ? <InlineCursor index={idx} listBlock={block} leftPos={block.x} topPos={block.y} selection={selection}/> : null} */}
             </React.Fragment>

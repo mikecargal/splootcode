@@ -23,6 +23,18 @@ export class TokenListBlockView extends React.Component<TokenListBlockViewProps>
     let {isSelected, inlineChildSet: inlineChildSet, lineCursor} = this.props;
     let className = isSelected ? 'selected' : '';
 
+    let selectedNode = -1;
+    let cursorPos = -1;
+    let childLineCursor = null;
+    if (lineCursor && lineCursor.baseChildSetId() === inlineChildSet.childSetId) {
+      if (lineCursor.cursor) {
+        cursorPos = lineCursor.baseIndex();
+      } else {
+        selectedNode = lineCursor.baseIndex();
+        childLineCursor = lineCursor.popBase();
+      }
+    }
+
     let nodeCount = inlineChildSet.inlineNodes.length;
     let allowInsert = true; // inlineChildSet.allowInsert();
     return (
@@ -31,11 +43,12 @@ export class TokenListBlockView extends React.Component<TokenListBlockViewProps>
           inlineChildSet.inlineNodes.map((inlineNode : InlineNode, idx: number) => {
             let selectionState = NodeSelectionState.UNSELECTED; // inlineChildSet.getChildSelectionState(idx);
             let insertBefore = true; //inlineChildSet.isInsert(idx);
+            let cursor = (idx === selectedNode) ? childLineCursor : null;
             let result =  (
               <React.Fragment>
                 <EditorNodeBlock
                   inlineNode={inlineNode}
-                  lineCursor={lineCursor}
+                  lineCursor={cursor}
                 />
               {/* { allowInsert ? <InlineCursor index={idx} listBlock=
                 <InlineCursor index={idx} listBlock={inlineChildSet} leftPos={nodeBlock.x} topPos={nodeBlock.y} selection={selection}/> */}

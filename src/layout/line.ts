@@ -34,6 +34,14 @@ export class Line {
   }
   
   getCursorByXCoordinate(x: number) : LineCursor {
-    return new LineCursor([]);
+    if (this.rootNode) {
+      let comp = this.rootNode.compareToX(x);
+      if (comp === -1) {
+        // Cursor before root node (if applicable)
+      } else {
+        return this.rootNode.getCursorByXCoordinate(new LineCursor([], false), x);
+      }
+    }
+    return new LineCursor([], true);
   }
 }
