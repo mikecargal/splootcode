@@ -73,12 +73,17 @@ export class InlineNode {
     return -1;
   }
 
-  // This function only makes sense is x is contained within the node.
   getCursorByXCoordinate(lineCursor: LineCursor, x: number) : LineCursor {
+    // This function only makes sense is x is contained within the node.
+    if (x < this.x) {
+      x = this.x;
+    }
+
     // Check left breadcrumb childset.
     if (this.leftBreadcrumbChildSet && x < (this.x + this.marginLeft)) {
       return this.inlineChildSets[this.leftBreadcrumbChildSet].getCursorByXCoordinate(lineCursor, x);
     }
+
 
     // Check within node block itself.
     // TODO: Make the childsets track their own x, this is kinda dumb.
@@ -91,7 +96,7 @@ export class InlineNode {
         || type === LayoutComponentType.CHILD_SET_TREE
         || type === LayoutComponentType.CHILD_SET_TREE_BRACKETS) {
         let childSetId = renderedComponent.layoutComponent.identifier;
-        if (x > leftPos && x < (leftPos + this.inlineChildSets[childSetId].width)) {
+        if (x >= leftPos && x < (leftPos + this.inlineChildSets[childSetId].width)) {
           return this.inlineChildSets[childSetId].getCursorByXCoordinate(lineCursor, x);
         }
         if (type === LayoutComponentType.CHILD_SET_TREE || type === LayoutComponentType.CHILD_SET_TREE_BRACKETS) {
@@ -112,6 +117,7 @@ export class InlineNode {
     }
 
     // Return cursor at this current node.
+    // TODO: Seprate concept of block from concept of being selectable at all.
     return lineCursor;
   }
 

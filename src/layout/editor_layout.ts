@@ -1,22 +1,41 @@
 import { SplootNode } from "../language/node";
 import { LayoutComponent, LayoutComponentType } from "../language/type_registry";
 import { stringWidth } from "./rendered_childset_block";
-import { ATTACHED_CHILD_SPACING, END_BLOCK_SPACING, INDENT, NODE_BLOCK_HEIGHT, NODE_BLOCK_SPACING, NODE_INLINE_SPACING, NODE_INLINE_SPACING_SMALL, RenderedInlineComponent, TOP_LEVEL_INDENT, TREE_CHILDREN_DOT_SIZE } from "./rendered_node";
+import { ATTACHED_CHILD_SPACING, INDENT, NODE_INLINE_SPACING, NODE_INLINE_SPACING_SMALL, RenderedInlineComponent, TOP_LEVEL_INDENT, TREE_CHILDREN_DOT_SIZE } from "./rendered_node";
 import { InlineNode } from "./inline_node";
 import { Line } from "./line";
 import { InlineChildSet } from "./inline_childset";
-import { SPLOOT_EXPRESSION } from "../language/types/js/expression";
+import { ChildSet } from "../language/childset";
 
+function hasStartingCursor(node: SplootNode) {
+  let layout = node.getNodeLayout();
+  let firstComponent = layout.components[0];
+  if (firstComponent.type === LayoutComponentType.CHILD_SET_TOKEN_LIST) {
+    return true;
+  }
+  return false;
+}
+
+function renderWholeLines(childSet: ChildSet, index: number, node: SplootNode, indent: number) : Line[] {
+  let lines = [];
+  let startingCursor = hasStartingCursor(node);
+  if (!startingCursor) {
+    // Add some space for the cursor
+    indent += NODE_INLINE_SPACING;
+  }
+  let [inlineNode, childLines] = renderInlineNode(node, indent);
+  lines.push(new Line(childSet, index, inlineNode, indent, startingCursor));
+  lines = lines.concat(childLines);
+  return lines;
+}
 
 // Returns a nodeblock and a set of extra lines. The Nodeblock is likely to be a member of a parent line.
 // This should be a pure function, we can memoize it to avoid re-rendering the child lines.
-function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
+function renderInlineNode(node: SplootNode, indent: number) : [InlineNode, Line[]] {
   let extraLines = [];
   let layout = node.getNodeLayout();
 
-  let numComponents = layout.components.length;
   const nodeInlineSpacing = layout.small ? NODE_INLINE_SPACING_SMALL : NODE_INLINE_SPACING;
-  let marginRight = 0;
 
   let leftPos = layout.block ? indent + nodeInlineSpacing : indent;
   let inlineNode = new InlineNode(node, indent);
@@ -30,12 +49,12 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
     if (component.type === LayoutComponentType.CHILD_SET_BLOCK) {
       // This will all be new lines.
       // for each child, we generate a set of lines and concatenate them.
-      node.childSets[component.identifier].children.forEach((childNode: SplootNode) => {
-        let [inlineNode, childLines] = renderLines(childNode, indent + INDENT);
-        extraLines.push(new Line(inlineNode));
+      let childSet = node.childSets[component.identifier];
+      childSet.children.forEach((childNode: SplootNode, idx: number) => {
+        let childLines = renderWholeLines(childSet, idx, childNode, indent + INDENT);
         extraLines = extraLines.concat(childLines);
       });
-      extraLines.push(new Line(null)); // Empty line
+      extraLines.push(new Line(childSet, childSet.getCount() + 1, null, indent + INDENT, true)); // Empty line
     }
     else if (component.type === LayoutComponentType.STRING_LITERAL) {
       let val = node.getProperty(component.identifier)
@@ -56,17 +75,17 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
       let childSet = node.getChildSet(component.identifier);
       let firstNewlineChild = 0;
       if (isLastInlineComponent && childSet.getCount() > 0) {
-        let [childInlineNode, childLines] = renderLines(childSet.getChild(0), leftPos);
+        let [childInlineNode, childLines] = renderInlineNode(childSet.getChild(0), leftPos);
         inlineNodes.push(childInlineNode);
         extraLines = extraLines.concat(childLines);
         firstNewlineChild = 1;
       }
-      node.childSets[component.identifier].children.forEach((childNode: SplootNode, idx: number) => {
+
+      childSet.children.forEach((childNode: SplootNode, idx: number) => {
         if (idx < firstNewlineChild) {
           return;
         }
-        let [inlineNode, childLines] = renderLines(childNode, leftPos);
-        extraLines.push(new Line(inlineNode));
+        let childLines = renderWholeLines(childSet, idx, childNode, leftPos);
         extraLines = extraLines.concat(childLines);
       });
       let inlineChildSet = new InlineChildSet(component.type, node.getChildSet(component.identifier), inlineNodes, leftPos);
@@ -75,7 +94,7 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
     else if (component.type === LayoutComponentType.CHILD_SET_INLINE) {
       let childNodes = [];
       node.childSets[component.identifier].children.forEach((childNode: SplootNode) => {
-        let [childInlineNode, childLines] = renderLines(childNode, leftPos);
+        let [childInlineNode, childLines] = renderInlineNode(childNode, leftPos);
         childNodes.push(childInlineNode);
         extraLines = extraLines.concat(childLines);
       });
@@ -87,7 +106,7 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
     else if (component.type === LayoutComponentType.CHILD_SET_BREADCRUMBS) {
       let childSet = node.getChildSet(component.identifier);
       if (childSet.getCount() !== 0) {
-        let [childInlineNode, childLines] = renderLines(childSet.getChild(0), indent);
+        let [childInlineNode, childLines] = renderInlineNode(childSet.getChild(0), indent);
         extraLines = extraLines.concat(childLines);
         let inlineChildSet = new InlineChildSet(component.type, childSet, [childInlineNode], leftPos);
         leftPos += inlineChildSet.width;
@@ -102,7 +121,7 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
       let childSet = node.getChildSet(component.identifier);
       let inlineNodes = [];
       if (childSet.getCount() !== 0) {
-        let [inlineNode, childLines] = renderLines(childSet.getChild(0), leftPos);
+        let [inlineNode, childLines] = renderInlineNode(childSet.getChild(0), leftPos);
         extraLines = extraLines.concat(childLines);
         inlineNodes = [inlineNode];
       }
@@ -115,7 +134,7 @@ function renderLines(node: SplootNode, indent: number) : [InlineNode, Line[]] {
       let childSetx = leftPos;
       leftPos += NODE_INLINE_SPACING
       node.childSets[component.identifier].children.forEach((childNode: SplootNode) => {
-        let [inlineNode, childLines] = renderLines(childNode, leftPos);
+        let [inlineNode, childLines] = renderInlineNode(childNode, leftPos);
         childNodes.push(inlineNode);
         leftPos += inlineNode.lineWidth() + NODE_INLINE_SPACING;
         extraLines = extraLines.concat(childLines);
@@ -136,8 +155,9 @@ export class EditorLayout {
   lines: Line[];
 
   constructor(rootNode: SplootNode) {
-    let [inlineNode, extraLines] = renderLines(rootNode, TOP_LEVEL_INDENT-INDENT);
-    this.lines = extraLines;
+    // Bit of a hack, the root node is one that we don't render (it's a html file or js file node.)
+    let [renderedRootNode, lines] = renderInlineNode(rootNode, TOP_LEVEL_INDENT-INDENT);
+    this.lines = lines;
     this.calculateYCoordinates();
   }
 

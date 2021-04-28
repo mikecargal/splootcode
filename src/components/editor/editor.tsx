@@ -52,8 +52,8 @@ export class Editor extends React.Component<EditorProps> {
       <svg className="editor-svg" xmlns="http://www.w3.org/2000/svg" ref={this.svgRef} height={height} preserveAspectRatio="none" onClick={this.clickHandler}>
         {
           layout.lines.map(line => {
-            let selection = selectedLine === line ? this.props.selection : null;
-            let result = <LineComponent key={line.key} line={line} selection={selection}/>
+            let cursor = selectedLine === line ? this.props.selection.lineCursor : null;
+            let result = <LineComponent key={line.key} line={line} lineCursor={cursor}/>
             return result;
           })
         }

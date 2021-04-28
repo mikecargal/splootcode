@@ -14,8 +14,8 @@ export const TREE_CHILDREN_DOT_SIZE = 20;
 export const ATTACHED_CHILD_SPACING = 10;
 export const NODE_BLOCK_HEIGHT = 30;
 export const NODE_BLOCK_SPACING = 2;
-export const TOP_LEVEL_INDENT = 10;
-export const INDENT = 24;
+export const TOP_LEVEL_INDENT = 4; // Note that there'll always be some extra space for the cursor.
+export const INDENT = 20;
 export const END_BLOCK_SPACING = 16;
 
 export class RenderedParentRef {
