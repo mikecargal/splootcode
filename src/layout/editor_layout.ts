@@ -54,7 +54,7 @@ function renderInlineNode(node: SplootNode, indent: number) : [InlineNode, Line[
         let childLines = renderWholeLines(childSet, idx, childNode, indent + INDENT);
         extraLines = extraLines.concat(childLines);
       });
-      extraLines.push(new Line(childSet, childSet.getCount() + 1, null, indent + INDENT, true)); // Empty line
+      extraLines.push(new Line(childSet, childSet.getCount() + 1, null, indent + INDENT + NODE_INLINE_SPACING, true)); // Empty line
     }
     else if (component.type === LayoutComponentType.STRING_LITERAL) {
       let val = node.getProperty(component.identifier)

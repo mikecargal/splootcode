@@ -3,7 +3,7 @@ import React from 'react'
 import { LineCursor, NodeSelection, NodeSelectionState } from '../../context/selection';
 
 import { Line } from '../../layout/line';
-import { NodeBlock } from '../../layout/rendered_node';
+import { END_BLOCK_SPACING, NODE_BLOCK_SPACING } from '../../layout/rendered_node';
 import { CursorBar } from './cursor';
 import { EditorNodeBlock } from './node_block';
 
@@ -27,9 +27,10 @@ export class LineComponent extends React.Component<LineProps> {
         childLineCursor = lineCursor.popBase();
       }
     }
+    let height = line.rootNode ? undefined : END_BLOCK_SPACING;
     return (
       <g transform={`translate(0 ${line.y})`}>
-        {cursorPos === line.index ? <CursorBar x={line.indent - 3} y={0}/> : null}
+        {cursorPos === line.index ? <CursorBar x={line.indent - 3} y={0} height={height}/> : null}
         <EditorNodeBlock
           inlineNode={line.rootNode}
           lineCursor={childLineCursor}

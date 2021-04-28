@@ -51,6 +51,6 @@ export class Line {
       }
       return this.rootNode.getCursorByXCoordinate(new LineCursor([{childSetId: this.childSetId, index: this.index}], false), x);
     }
-    return new LineCursor([], true);
+    return new LineCursor([{childSetId: this.childSetId, index: this.index}], true);
   }
 }
