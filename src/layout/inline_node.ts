@@ -22,6 +22,8 @@ export class InlineNode {
   marginRight: number;
   marginLeft: number;
 
+  rightHandChildSetOrder: string[];
+
   constructor(node: SplootNode, x: number) {
     this.x = x;
     this.node = node;
@@ -33,6 +35,7 @@ export class InlineNode {
     this.rightAttachedChildSet = null;
     this.block = node.getNodeLayout().block;
     this.blockWidth = this.block ? NODE_INLINE_SPACING : 0;
+    this.rightHandChildSetOrder = [];
   }
 
   getTextColor() : string {
@@ -61,6 +64,9 @@ export class InlineNode {
     }
     if (childSet) {
       this.inlineChildSets[renderedComponent.layoutComponent.identifier] = childSet;
+      if (type !== LayoutComponentType.CHILD_SET_BREADCRUMBS) {
+        this.rightHandChildSetOrder.push(renderedComponent.layoutComponent.identifier);
+      }
     }
   }
 
@@ -119,6 +125,150 @@ export class InlineNode {
     // Return cursor at this current node.
     // TODO: Seprate concept of block from concept of being selectable at all.
     return lineCursor;
+  }
+
+  getXCoordOfCursor(cursor: LineCursor) : number {
+    if (cursor.isEmpty()) {
+      return this.x + this.marginLeft + 10; // Just inside the left of the block
+    }
+    let childSet = cursor.baseChildSetId();
+    return this.inlineChildSets[childSet].getXCoordOfCursor(cursor);
+  }
+
+  getCursorToTheLeftOf(lineCursor: LineCursor) : LineCursor {
+    let searchFromChildsetIndex = this.rightHandChildSetOrder.length - 1;
+
+    if (!lineCursor.isEmpty()) {
+      let nextChildSetDown = lineCursor.baseChildSetId();
+      let newCursor = this.inlineChildSets[nextChildSetDown].getCursorToTheLeftOf(lineCursor);
+      if (newCursor) {
+        // We found the next position somewhere in that childset.
+        return newCursor;
+      } else {
+        if (nextChildSetDown === this.leftBreadcrumbChildSet) {
+          // We just exhausted the left breadcrumb, we're done here.
+          return null;
+        }
+        // It was a right-side childset, check childsets to the left of that one.
+        searchFromChildsetIndex = this.rightHandChildSetOrder.indexOf(nextChildSetDown) - 1;
+        while (searchFromChildsetIndex >= 0) {
+          let childSetId = this.rightHandChildSetOrder[searchFromChildsetIndex];
+          let newCursor = this.inlineChildSets[childSetId].getRightMostCursor();
+          if (newCursor) {
+            return newCursor;
+          }
+          searchFromChildsetIndex -= 1;
+        }
+        // My right-side children are exhausted, must be me.
+        if (this.block) {
+          return new LineCursor([], false);
+        }
+      }
+    } else {
+      // I must be selected, search left only;
+    }
+
+    // Go left of me, or bail up.
+    if (this.leftBreadcrumbChildSet) {
+      let newCursor = this.inlineChildSets[this.leftBreadcrumbChildSet].getRightMostCursor();
+      if (newCursor) {
+        return newCursor;
+      }
+      return null;
+    }
+    return null;
+  }
+
+  getCursorToTheRightOf(lineCursor: LineCursor) : LineCursor {
+    // Follow the lineCursor stack down.
+    /* Example cursor (cursor = false)
+    1: {childSetId: "condition", index: 0} // expression is 0th child of condition
+    2: {childSetId: "tokens", index: 1} // second token in expression is selected.
+    */
+
+    let searchFromChildsetIndex = 0;
+
+    if (!lineCursor.isEmpty()) {
+      /// lineCursor.baseChildSetId() must be one of my childsets.
+      let nextChildSetDown = lineCursor.baseChildSetId();
+      let newCursor = this.inlineChildSets[nextChildSetDown].getCursorToTheRightOf(lineCursor);
+      if (newCursor) {
+        // We found the next position somewhere in that childset.
+        return newCursor;
+      } else {
+        // That childset is done. keep searching.
+        if (nextChildSetDown === this.leftBreadcrumbChildSet) {
+          // If the left breadcrumb set is done, I am now selected, but only if I'm selectable
+          if (this.block) {
+            return new LineCursor([], false);
+          }
+        }
+        searchFromChildsetIndex = this.rightHandChildSetOrder.indexOf(nextChildSetDown) + 1;
+      }
+    } else {
+      // Cursor is empty, I must be selected. Select from my right-hand children.
+    }
+
+    // Now we search down the right-side childsets only;
+    while (searchFromChildsetIndex < this.rightHandChildSetOrder.length) {
+      let childSetId = this.rightHandChildSetOrder[searchFromChildsetIndex];
+      let newCursor = this.inlineChildSets[childSetId].getLeftmostCursor();
+      if (newCursor) {
+        return newCursor;
+      }
+      searchFromChildsetIndex += 1;
+    }
+    
+    // We have exhausted our childsets, return null;
+    return null;
+  }
+
+  getLeftmostCursorPosition() : LineCursor {
+    if (this.leftBreadcrumbChildSet) {
+      let newCursor = this.inlineChildSets[this.leftBreadcrumbChildSet].getLeftmostCursor();
+      if (newCursor) {
+        return newCursor;
+      }
+    }
+    let searchFromChildsetIndex = 0;
+
+    if (this.block) {
+      // selectable
+      return new LineCursor([], false);
+    }
+
+    while (searchFromChildsetIndex < this.rightHandChildSetOrder.length) {
+      let childSetId = this.rightHandChildSetOrder[searchFromChildsetIndex];
+      let newCursor = this.inlineChildSets[childSetId].getLeftmostCursor();
+      if (newCursor) {
+        return newCursor;
+      }
+      searchFromChildsetIndex += 1;
+    }
+
+    return null;
+  }
+
+  getRightMostCursorPosition() : LineCursor {
+    let searchFromChildsetIndex = this.rightHandChildSetOrder.length - 1;
+    while (searchFromChildsetIndex >= 0) {
+      let childSetId = this.rightHandChildSetOrder[searchFromChildsetIndex];
+      let newCursor = this.inlineChildSets[childSetId].getRightMostCursor();
+      if (newCursor) {
+        return newCursor;
+      }
+      searchFromChildsetIndex -= 1;
+    }
+    if (this.block) {
+      return new LineCursor([], false);
+    }
+    if (this.leftBreadcrumbChildSet) {
+      let newCursor = this.inlineChildSets[this.leftBreadcrumbChildSet].getRightMostCursor();
+      if (newCursor) {
+        return newCursor;
+      }
+    }
+    return null;
   }
 
   lineWidth() {

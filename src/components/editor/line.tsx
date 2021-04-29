@@ -16,14 +16,12 @@ interface LineProps {
 export class LineComponent extends React.Component<LineProps> {
   render() {
     let {line, lineCursor} = this.props;
-    let selectedNode = -1;
     let cursorPos = -1;
     let childLineCursor = null;
     if (lineCursor && lineCursor.baseChildSetId() === line.childSetId) {
       if (lineCursor.isCurrentLevelCursor()) {
         cursorPos = lineCursor.baseIndex();
       } else {
-        selectedNode = lineCursor.baseIndex();
         childLineCursor = lineCursor.popBase();
       }
     }

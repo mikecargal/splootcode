@@ -44,6 +44,10 @@ export class LineCursor {
     return this.cursor && this.stack.length === 1;
   }
 
+  isCurrentLevelSelection() {
+    return (!this.cursor) && this.stack.length === 1;
+  }
+
   baseChildSetId() : string {
     if (this.isEmpty()) { return null};
     return this.stack[0].childSetId;
@@ -51,6 +55,10 @@ export class LineCursor {
 
   baseIndex() : number {
     return this.stack[0].index;
+  }
+
+  pushBase(entry: {childSetId: string, index: number}) : LineCursor {
+    return new LineCursor([entry].concat(this.stack), this.cursor);
   }
 
   pushSelectedNode(entry: {childSetId: string, index: number}) : LineCursor {
@@ -228,6 +236,12 @@ export class NodeSelection {
     this.line = selectedLine;
   }
 
+  resetLastX() {
+    if (this.line && this.lineCursor) {
+      this.lastX = this.line.getXCoordOfCursor(this.lineCursor);
+    }
+  }
+
   @action
   moveKeyUp() {
     let y = this.line.y - 1;
@@ -245,12 +259,42 @@ export class NodeSelection {
 
   @action
   moveKeyRight() {
-    console.log('right');
+    // Get current line
+    if (this.line && this.lineCursor) {
+      let newCursor = this.line.getCursorToTheRightOf(this.lineCursor);
+      if (newCursor) {
+        this.lineCursor = newCursor;
+        this.resetLastX();
+      } else {
+        // End of line, place cursor on next line.
+        this.lastX = 0;
+        this.moveKeyDown();
+      }
+    }
   }
 
   @action
   moveKeyLeft() {
-    console.log('left');
+    // Get current line
+    if (this.line && this.lineCursor) {
+      let newCursor = this.line.getCursorToTheLeftOf(this.lineCursor);
+      if (newCursor) {
+        this.lineCursor = newCursor;
+        this.resetLastX();
+      } else {
+        // End of line, place cursor on next line.
+        let selectedLine : Line = this.line;
+        for (let line of this.editorLayout.lines) {
+          if (line.y >= this.line.y) {
+            break;
+          }
+          selectedLine = line;
+        }
+        this.line = selectedLine;
+        this.lineCursor = selectedLine.getRightMostCursor();
+        this.resetLastX();
+      }
+    }
   }
 
 
