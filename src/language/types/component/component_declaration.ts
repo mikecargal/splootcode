@@ -6,7 +6,7 @@ import { NodeCategory, registerNodeCateogry, SuggestionGenerator } from "../../n
 import { TypeRegistration, NodeLayout, LayoutComponentType, LayoutComponent, registerType, SerializedNode } from "../../type_registry";
 import { ExportDeclarationKind, ExpressionKind, IdentifierKind } from "ast-types/gen/kinds";
 import { SplootExpression, SPLOOT_EXPRESSION } from "../js/expression";
-import { ComponentDefinition, FunctionDefinition, VariableDefinition } from "../../lib/loader";
+import { ComponentDefinition } from "../../lib/loader";
 import { HighlightColorCategory } from "../../../layout/colors";
 import { SuggestedNode } from "../../suggested_node";
 import { DeclaredIdentifier } from "../js/declared_identifier";
@@ -77,7 +77,21 @@ export class ComponentDeclaration extends JavaScriptSplootNode {
   }
 
   generateJsAst() : ExportDeclarationKind {
+    let componentIdentifierNode = this.getIdentifier().getChild(0) as DeclaredIdentifier;
     let statements = [];
+    // Add statement to capture props
+    let scopeChain = recast.types.builders.arrayExpression(this.getScopeChain().map(scopeId => {
+      return recast.types.builders.stringLiteral(scopeId);
+    }))
+    let args = [
+      scopeChain,
+      recast.types.builders.stringLiteral(componentIdentifierNode.getName()),
+      recast.types.builders.identifier('props')
+    ];
+    let callee = recast.types.builders.identifier('captureProps');
+    let captureprops = recast.types.builders.callExpression(callee, args);
+    statements.push(recast.types.builders.expressionStatement(captureprops));
+
     let params = [recast.types.builders.identifier('props')];
     this.getBody().children.forEach((node: JavaScriptSplootNode) => {
       let ast = node.generateJsAst();
@@ -89,12 +103,13 @@ export class ComponentDeclaration extends JavaScriptSplootNode {
       }
     });
     let block = recast.types.builders.blockStatement(statements);
-    let identifier = (this.getIdentifier().getChild(0) as JavaScriptSplootNode).generateJsAst() as IdentifierKind
+    let identifier = componentIdentifierNode.generateJsAst() as IdentifierKind
     return recast.types.builders.exportDeclaration(false, recast.types.builders.functionDeclaration(identifier, params, block));
   }
 
   static deserializer(serializedNode: SerializedNode) : ComponentDeclaration {
     let node = new ComponentDeclaration(null);
+    node.scopeId = serializedNode.scopeId;
     node.deserializeChildSet('identifier', serializedNode);
     node.deserializeChildSet('props', serializedNode);
     node.deserializeChildSet('body', serializedNode);

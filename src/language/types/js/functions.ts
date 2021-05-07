@@ -96,6 +96,7 @@ export class FunctionDeclaration extends JavaScriptSplootNode {
 
   static deserializer(serializedNode: SerializedNode) : FunctionDeclaration {
     let node = new FunctionDeclaration(null);
+    node.scopeId = serializedNode.scopeId;
     node.deserializeChildSet('identifier', serializedNode);
     node.deserializeChildSet('params', serializedNode);
     node.deserializeChildSet('body', serializedNode);

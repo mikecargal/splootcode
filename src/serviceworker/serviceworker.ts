@@ -1,9 +1,23 @@
+import { generateScopeWithoutTypes } from "../language/scope/scope";
 import { DATA_SHEET } from "../language/types/dataset/datasheet";
 import { JAVASCRIPT_FILE } from "../language/types/js/javascript_file";
 import { loadTypes } from "../language/type_loader";
 import { deserializeNode, SerializedNode } from "../language/type_registry";
 
 const CacheName = 'splootcache-v1';
+
+const PARENT_TARGET_DOMAIN = process.env.EDITOR_DOMAIN;
+const TRACKER_FILE = `
+
+export function captureProps(nodePath, componentName, props) {
+  console.log('I am inside the preview frame');
+  let payload = {
+    type: 'captureProps',
+    data: {nodePath: nodePath, componentName: componentName, props: props}
+  };
+  parent.postMessage(payload, "${PARENT_TARGET_DOMAIN}");
+}
+`
 
 loadTypes();
 
@@ -32,8 +46,9 @@ self.addEventListener('fetch', (event : FetchEvent) => {
   }
 });
 
-function handleNodeTree(filename: string, serializedNode: SerializedNode) {
+async function handleNodeTree(filename: string, serializedNode: SerializedNode) {
   let rootNode = deserializeNode(serializedNode);
+  generateScopeWithoutTypes(rootNode);
   if (rootNode === null) {
     console.warn('Failed to deserialize node tree.');
     return;
@@ -46,6 +61,7 @@ function handleNodeTree(filename: string, serializedNode: SerializedNode) {
       break;
   }
   addFileToCache('/' + filename, contentType, rootNode.generateCodeString());
+  addFileToCache('/__sploottracker.js', 'text/javascript', TRACKER_FILE);
 }
 
 self.addEventListener('message', (event: MessageEvent) => {

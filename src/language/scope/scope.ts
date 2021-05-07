@@ -51,6 +51,14 @@ export function addPropertyToTypeExpression(originalType: TypeExpression, proper
   return typeUnion(originalType, objectType);
 }
 
+const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+export function generateNewScopeId() : string {
+  let result = [];
+  for (let i = 0; i < 12; i++ ) {
+    result.push(chars.charAt(Math.floor(Math.random() * chars.length)));
+  }
+  return result.join('');
+}
 
 export class Scope {
   parent: Scope;
@@ -61,7 +69,8 @@ export class Scope {
   components: {[key:string]: ComponentDefinition};
   functions: {[key:string]: FunctionDefinition};
 
-  constructor(parent: Scope) {
+  constructor(scopeId: string, parent: Scope) {
+    this.id = scopeId;
     this.parent = parent;
     this.variables = {};
     this.components = {};
@@ -184,10 +193,17 @@ export function getGlobalScope() : Scope {
   return globalScope;
 }
 
+// Used by service worker where we don't need all the typescript info.
+export function generateScopeWithoutTypes(rootNode: SplootNode) {
+  let scope = new Scope('global', null);
+  scope.isGlobal = true;
+  globalScope = scope;
+  rootNode.recursivelyBuildScope();
+}
+
 export async function generateScope(rootNode: SplootNode) {
   await loadTypescriptTypeInfo();
-  let scope = new Scope(null);
-  scope.id = "global";
+  let scope = new Scope('global', null);
   scope.isGlobal = true;
   let windowType = typeRegistry['Window'];
   windowType.properties.forEach((variable : VariableDefinition) => {

@@ -128,7 +128,7 @@ export function getLayout(typeName: string) : NodeLayout {
 
 export interface SerializedNode {
   type: string,
-  id: string,
+  scopeId: string,
   properties: { [key: string]: string },
   childSets: { [key: string]: SerializedNode[] }
 }

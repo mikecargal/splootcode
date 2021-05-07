@@ -4,7 +4,7 @@ import { globalMutationDispatcher } from '../../language/mutations/mutation_disp
 import { NodeMutation } from '../../language/mutations/node_mutations';
 import { ChildSetMutation } from '../../language/mutations/child_set_mutations';
 
-import { Box, ButtonGroup, FormControl, FormLabel, Switch, IconButton, HStack, Spacer } from "@chakra-ui/react";
+import { Box, ButtonGroup, FormControl, FormLabel, Switch, IconButton, HStack, Spacer, BreadcrumbLink } from "@chakra-ui/react";
 import { RepeatIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 
 import './frame_view.css';
@@ -204,6 +204,9 @@ class DocumentNodeComponent extends Component<DocumentNodeProps> {
         if (this.autorefresh) {
           this.reloadSiteInFrame();
         }
+        break;
+      case 'captureProps':
+        console.log(event.data.data);
         break;
       default:
         console.warn('Unknown event from frame: ', event);

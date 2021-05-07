@@ -4,7 +4,7 @@ import { NodeMutationType, NodeMutation } from "./mutations/node_mutations";
 import { NodeObserver } from "./observers";
 import { deserializeNode, getLayout, isScopedNodeType, NodeLayout, SerializedNode } from "./type_registry";
 import { globalMutationDispatcher } from "./mutations/mutation_dispatcher";
-import { getGlobalScope, Scope } from "./scope/scope";
+import { generateNewScopeId, generateScope, getGlobalScope, Scope } from "./scope/scope";
 
 export class ParentReference {
   node: SplootNode;
@@ -28,6 +28,7 @@ export class SplootNode {
   childSetOrder: string[];
   mutationObservers: NodeObserver[];
   scope: Scope;
+  scopeId: string;
 
   constructor(parent: ParentReference, type: string) {
     this.parent = parent;
@@ -37,6 +38,7 @@ export class SplootNode {
     this.properties = {};
     this.mutationObservers = [];
     this.scope = null;
+    this.scopeId = null;
   }
 
   get hasChildSets(): boolean {
@@ -65,10 +67,16 @@ export class SplootNode {
 
   recursivelyBuildScope() {
     if (isScopedNodeType(this.type)) {
+      console.log(this.scopeId);
+      if (this.scopeId === null) {
+        
+        this.scopeId = generateNewScopeId();
+        console.log('generated scope', this.scopeId);
+      }
       if (this.parent !== null) {
-        this.scope = new Scope(this.parent.node.getScope());
+        this.scope = new Scope(this.scopeId, this.parent.node.getScope());
       } else {
-        this.scope = new Scope(getGlobalScope());
+        this.scope = new Scope(this.scopeId, getGlobalScope());
       }
     }
     this.addSelfToScope();
@@ -78,6 +86,16 @@ export class SplootNode {
         node.recursivelyBuildScope();
       });
     })
+  }
+
+  getScopeChain() : string[] {
+    let scope = this.getScope();
+    let result = [];
+    while (scope.id !== 'global') {
+      result.push(scope.id);
+      scope = scope.parent;
+    }
+    return result;
   }
 
   getChildSet(name: string) {
@@ -129,11 +147,12 @@ export class SplootNode {
   }
 
   serialize(): SerializedNode {
-    let result = {
+    let result : SerializedNode = {
       type: this.type,
+      scopeId: this.scopeId || null,
       properties: {},
       childSets: {}
-    } as SerializedNode;
+    };
     for (let property in this.properties) {
       result.properties[property] = this.properties[property];
     }

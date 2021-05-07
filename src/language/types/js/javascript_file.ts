@@ -24,6 +24,14 @@ export class JavascriptFile extends JavaScriptSplootNode {
 
   generateJsAst() : ASTNode {
     let statements = [];
+    // Insert tracking imports at the top.
+    let specifiers = ['captureProps'].map((name: string) => {
+      return recast.types.builders.importSpecifier(recast.types.builders.identifier(name));
+    });
+    let source = recast.types.builders.stringLiteral('/__sploottracker.js');
+    let importTracker = recast.types.builders.importDeclaration(specifiers, source);
+    statements.push(importTracker);
+
     this.getBody().children.forEach((node : JavaScriptSplootNode) => {
       let result = null;
       if (node.type === SPLOOT_EXPRESSION) {
@@ -57,6 +65,7 @@ export class JavascriptFile extends JavaScriptSplootNode {
 
   static deserializer(serializedNode: SerializedNode) : JavascriptFile {
     let jsFile = new JavascriptFile(null);
+    jsFile.scopeId = serializedNode.scopeId;
     jsFile.deserializeChildSet('body', serializedNode);
     return jsFile;
   }
