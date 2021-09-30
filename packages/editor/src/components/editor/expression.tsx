@@ -1,0 +1,27 @@
+import React from "react"
+
+import { NodeSelection, NodeSelectionState } from "../../context/selection.js"
+import { NodeBlock } from "../../layout/rendered_node.js"
+import { TokenListBlockView } from "./token_list_block.js"
+
+interface NodeBlockProps {
+  block: NodeBlock;
+  selection: NodeSelection;
+  selectionState: NodeSelectionState;
+}
+
+export class SplootExpressionView extends React.Component<NodeBlockProps> {
+  render() {
+    let { block, selection, selectionState } = this.props;
+    let isSelected = selectionState === NodeSelectionState.SELECTED;
+    let width = block.blockWidth;
+
+    let tokenBlock = block.renderedChildSets['tokens'];
+
+    return (
+      <React.Fragment>
+        <TokenListBlockView key={0} block={tokenBlock} isSelected={isSelected} selection={this.props.selection} />
+      </React.Fragment>
+    )
+  }
+}

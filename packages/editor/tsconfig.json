@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "outDir": "./lib/esm",
+    "rootDir": "./src",
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM", "WebWorker"],
+    "jsx": "react",
+    "declaration": true,
+    "moduleResolution": "Node",
+    "strict": false,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src"],
+}

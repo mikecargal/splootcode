@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "rootDir": "src",
     "target": "es5",
     "module": "commonjs",
     "lib": ["dom", "es2015", "es2016", "webworker"],
@@ -9,5 +10,6 @@
     "experimentalDecorators": true,
     "jsx": "react",
     "resolveJsonModule": true
-  }
+  },
+  "include": ["src"]
 }

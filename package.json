@@ -20,6 +20,7 @@
     "@chakra-ui/react": "1.2.1",
     "@emotion/react": "^11.1.4",
     "@emotion/styled": "^11.0.0",
+    "@splootcode/editor": "file:./packages/editor",
     "@types/css-tree": "^1.0.5",
     "@types/react-router-dom": "^5.1.3",
     "@types/uuid": "^3.4.7",
