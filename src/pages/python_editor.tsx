@@ -1,9 +1,6 @@
+import { Editor, EditorState, EditorStateContext, Project, PythonFrame, SplootPackage } from '@splootcode/editor';
 import React from 'react'
-import { Editor } from '../components/editor/editor';
-import { PythonFrame } from '../components/python/python_frame';
-import { EditorState, EditorStateContext } from '../context/editor_context';
-import { SplootPackage } from '../language/projects/package';
-import { Project } from '../language/projects/project';
+
 
 
 interface WebEditorProps {

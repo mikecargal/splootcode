@@ -84,7 +84,7 @@ class DragOverlayInternal extends React.Component<DragOverlayInternalProps, Drag
     );
   }
 
-  onMouseUp = (event: React.MouseEvent) => {
+  onMouseUp = (event: React.MouseEvent<HTMLDivElement>) => {
     let {selection, block, editorRef} = this.props;
 
     let refBox = editorRef.current.getBoundingClientRect();
@@ -101,7 +101,7 @@ class DragOverlayInternal extends React.Component<DragOverlayInternalProps, Drag
     this.props.onEndDrag();
   }
 
-  onMouseMove = (event: React.MouseEvent) => {
+  onMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.buttons === 0) {
       this.props.onEndDrag();
     } else {

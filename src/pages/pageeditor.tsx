@@ -5,23 +5,16 @@ import { observer } from 'mobx-react';
 import { Box, Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon, Stack, Menu, MenuButton, Button, MenuList, MenuItem, Icon, Spacer, Flex, IconButton } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 
-import { EditorStateContext, EditorState, DataSheetState } from '../context/editor_context';
-import { NodeBlock } from '../layout/rendered_node';
-import { loadTypes } from '../language/type_loader';
-import { Project, ProjectLayoutType } from '../language/projects/project';
 import { loadExampleProject, loadProject, saveProject } from '../code_io/project_loader';
-import { SplootFile } from '../language/projects/file';
-import { SplootPackage } from '../language/projects/package';
 import { LoadProjectModal } from '../components/load_modal';
 
 
 import './pageeditor.css';
 import { NewFileModal } from '../components/new_file_modal';
-import { SplootNode } from '../language/node';
-import { DATA_SHEET, SplootDataSheet } from '../language/types/dataset/datasheet';
 import { WebEditorPanels } from './web_editor';
 import { PythonEditorPanels } from './python_editor';
 import { NewProjectModal } from '../components/new_project_modal';
+import { DataSheetState, DATA_SHEET, EditorState, EditorStateContext, FileType, NodeBlock, Project, ProjectLayoutType, SplootDataSheet, SplootFile, SplootNode, SplootPackage } from '@splootcode/editor';
 
 interface PageEditorProps {
 };
@@ -58,12 +51,11 @@ class PageEditorInternal extends Component<PageEditorProps, PageEditorState> {
   }
 
   componentDidMount() {
-    loadTypes();
-
     loadExampleProject('blank').then((project) => {
       this.setState({
         project: project,
         ready: true,
+        selectedFile: null,
       });
       const pack = project.getDefaultPackage();
       const file = pack.getDefaultFile();
@@ -77,6 +69,7 @@ class PageEditorInternal extends Component<PageEditorProps, PageEditorState> {
     this.setState({
       project: project,
       ready: true,
+      selectedFile: null,
     });
     setTimeout(() => this.selectFile(pack, file), 20);
   }
@@ -124,8 +117,8 @@ class PageEditorInternal extends Component<PageEditorProps, PageEditorState> {
         <NewFileModal isOpen={openNewFileModal} onClose={() => {
           this.setState({openNewFileModal: false, newFilePackageName: ''});
         }} addCodeFile={
-          (name: string, type: string, rootNode: SplootNode) => {
-            onlyPackage.addFile(name, type, rootNode);
+          (name: string, type: FileType) => {
+            onlyPackage.createNewFile(name, type)
           }
         }/>
         <nav className="left-panel">
@@ -192,10 +185,12 @@ class PageEditorInternal extends Component<PageEditorProps, PageEditorState> {
             </AccordionItem>
           </Accordion> */}
         </nav>
-        { project.layoutType === ProjectLayoutType.PYTHON_CLI ? 
+        { selectedFile === null ? null :
+         (project.layoutType === ProjectLayoutType.PYTHON_CLI ? 
           <PythonEditorPanels project={project} selectedFile={selectedFile}  />
           :
           <WebEditorPanels isNodeEditor={isNodeEditor} project={project} selectedDatasheet={selectedDatasheet} selectedFile={selectedFile} />
+         )
         }
       </div>
     )

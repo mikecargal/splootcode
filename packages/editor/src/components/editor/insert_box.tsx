@@ -9,13 +9,13 @@ import {
   NodeSelection,
   NodeSelectionState,
   SelectionState,
-} from "../../context/selection"
+} from "../../context/selection.js"
 import { ParentReference } from "../../language/node.js"
 import {
   getAutocompleteFunctionsForCategory,
   NodeCategory,
   SuggestionGenerator,
-} from "../../language/node_category_registry"
+} from "../../language/node_category_registry.js"
 import { SuggestedNode } from "../../language/suggested_node.js"
 import { EditorNodeBlock } from "./node_block.js"
 import { RenderedChildSetBlock, stringWidth } from "../../layout/rendered_childset_block.js"

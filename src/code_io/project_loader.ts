@@ -1,5 +1,4 @@
-import { SerializedProject, Project } from '../language/projects/project';
-import { SplootPackage } from '../language/projects/package';
+import { Project, SerializedProject, SplootPackage } from '@splootcode/editor';
 import { FileSystemFileLoader } from './filesystem_file_loader';
 import { StaticFileLoader } from './static_file_loader';
 

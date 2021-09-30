@@ -1,10 +1,5 @@
+import { DataSheetEditor, DataSheetState, Editor, EditorState, EditorStateContext, Project, SplootPackage, ViewPage } from '@splootcode/editor';
 import React from 'react'
-import { DataSheetEditor } from '../components/datasheet/datasheet';
-import { Editor } from '../components/editor/editor';
-import { ViewPage } from '../components/preview/frame_view';
-import { DataSheetState, EditorState, EditorStateContext } from '../context/editor_context';
-import { SplootPackage } from '../language/projects/package';
-import { Project } from '../language/projects/project';
 
 
 interface WebEditorProps {

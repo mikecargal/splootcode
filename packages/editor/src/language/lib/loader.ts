@@ -1,4 +1,4 @@
-import { FunctionDeclaration } from "../types/js/functions";
+import { FunctionDeclaration } from "../types/js/functions.js";
 
 export interface FunctionTypeDefinition {
   parameters: VariableDefinition[];

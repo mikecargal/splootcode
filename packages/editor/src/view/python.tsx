@@ -10,8 +10,8 @@ import React from "react"
 import ReactDOM from "react-dom"
 
 import WasmTTY  from "./wasm-tty/wasm-tty.js";
-import { AppProviders } from "../providers.js";
 import { Button, ButtonGroup } from "@chakra-ui/react";
+import { AppProviders } from "./providers";
 
 const PARENT_TARGET_DOMAIN = process.env.EDITOR_DOMAIN;
 export enum FrameState {

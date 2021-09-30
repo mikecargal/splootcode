@@ -1,9 +1,4 @@
-import { SplootNode } from "../language/node";
-import { SerializedSplootPackage, SplootPackage } from "../language/projects/package";
-import { FileLoader } from "../language/projects/project";
-import { generateScope } from "../language/scope/scope";
-import { deserializeNode, SerializedNode } from "../language/type_registry";
-
+import { FileLoader, SerializedNode, SerializedSplootPackage, SplootNode, SplootPackage } from "@splootcode/editor";
 
 export class StaticFileLoader implements FileLoader {
   rootProjectUrl: string;
@@ -21,12 +16,9 @@ export class StaticFileLoader implements FileLoader {
     return new SplootPackage(projectId, pack, this);
   }
   
-  async loadFile(projectId: string, packageId: string, filename: string) : Promise<SplootNode> {
+  async loadFile(projectId: string, packageId: string, filename: string) : Promise<SerializedNode> {
     let fileStr = await (await fetch(this.rootProjectUrl + packageId + '/' + filename + '.sp')).text()
     let serNode = JSON.parse(fileStr) as SerializedNode;
-    let rootNode = deserializeNode(serNode);
-    generateScope(rootNode);
-    rootNode.recursivelySetMutations(true);
-    return rootNode;
+    return serNode;
   }
 }

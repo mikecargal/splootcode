@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 import { Box, Button, Grid, Heading, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, TagLabel, Text, useDisclosure, useRadio, useRadioGroup } from "@chakra-ui/react"
-import { Project } from '../language/projects/project';
 import { loadExampleProject, loadProject } from '../code_io/project_loader';
+import { Project } from '@splootcode/editor';
 
 
 function RadioCard(props) {

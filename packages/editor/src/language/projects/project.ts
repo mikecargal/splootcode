@@ -1,5 +1,5 @@
-import { SplootNode } from "../node.js";
-import { SerializedSplootPackage, SerializedSplootPackageRef, SplootPackage } from "./package.js";
+import { SerializedNode } from "../type_registry.js";
+import { SerializedSplootPackageRef, SplootPackage } from "./package.js";
 
 export interface SerializedProject {
   name: string;
@@ -11,7 +11,7 @@ export interface SerializedProject {
 
 export interface FileLoader {
   loadPackage: (projectId: string, packageId: string) => Promise<SplootPackage>;
-  loadFile: (projectId: string, packageId: string, filename: string) => Promise<SplootNode>;
+  loadFile: (projectId: string, packageId: string, filename: string) => Promise<SerializedNode>;
 }
 
 export enum ProjectLayoutType {
@@ -54,7 +54,6 @@ export class Project {
       packages: this.packages.map(pack => {
         let packRef : SerializedSplootPackageRef = {
           name: pack.name,
-          buildType: pack.buildType.toString(),
         };
         return packRef;
       })

@@ -7,7 +7,7 @@ import { NodeSelection, SelectionState } from "../../context/selection.js"
 import {
   adaptNodeToPasteDestination,
   deserializeNode,
-} from "../../language/type_registry"
+} from "../../language/type_registry.js"
 import { HTML_DOCUMENT } from "../../language/types/html/html_document.js"
 import { JAVASCRIPT_FILE } from "../../language/types/js/javascript_file.js"
 import { PYTHON_FILE } from "../../language/types/python/python_file.js"
@@ -83,7 +83,7 @@ export class Editor extends React.Component<EditorProps> {
     this.props.selection.startDrag(nodeBlock, offsetX, offestY);
   }
 
-  onClickHandler = (event: React.MouseEvent) => {
+  onClickHandler = (event: React.MouseEvent<SVGSVGElement>) => {
     let selection = this.props.selection;
     let refBox = this.editorSvgRef.current.getBoundingClientRect();
     let x = event.pageX - refBox.left;

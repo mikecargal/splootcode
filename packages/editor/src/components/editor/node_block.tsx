@@ -7,7 +7,7 @@ import { NodeSelection, NodeSelectionState } from "../../context/selection.js"
 import {
   LayoutComponent,
   LayoutComponentType,
-} from "../../language/type_registry"
+} from "../../language/type_registry.js"
 import { SPLOOT_EXPRESSION } from "../../language/types/js/expression.js"
 import { PYTHON_EXPRESSION } from "../../language/types/python/python_expression.js"
 import { NodeBlock, RenderedInlineComponent } from "../../layout/rendered_node.js"

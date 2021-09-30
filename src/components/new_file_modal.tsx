@@ -1,34 +1,28 @@
 import React, { useState } from 'react';
 
 import { Box, Button, FormControl, FormHelperText, HStack, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useRadio, useRadioGroup } from "@chakra-ui/react"
-import { HTML_DOCUMENT, SplootHtmlDocument } from '../language/types/html/html_document';
-import { JavascriptFile, JAVASCRIPT_FILE } from '../language/types/js/javascript_file';
-import { SplootNode } from '../language/node';
-import { generateScope } from '../language/scope/scope';
-import { DATA_SHEET, SplootDataSheet } from '../language/types/dataset/datasheet';
+import { FileType } from '@splootcode/editor';
 
-
-const fileExtension = {
-  HTML_DOCUMENT: '.html',
-  JAVASCRIPT_FILE: '.js',
-  DATA_SHEET: '.sheet',
-}
+const fileExtension : {[key: string]: string} = {}
+fileExtension[FileType.HtmlDocument] = '.html'
+fileExtension[FileType.JavaScript] = '.js'
+fileExtension[FileType.DataSheet] = '.sheet'
 
 interface NewFileModalProps {
   isOpen: boolean;
   onClose: () => void;
-  addCodeFile: (name: string, type: string, rootNode: SplootNode) => void;
+  addCodeFile: (name: string, type: FileType) => void;
 }
 
 export function NewFileModal(props: NewFileModalProps) {
   let { isOpen, onClose, addCodeFile} = props;
 
-  let [fileType, setFileType] = useState(HTML_DOCUMENT);
-  let [fileName, setFileName] = useState('newfile' + fileExtension[HTML_DOCUMENT]);
+  let [fileType, setFileType] = useState(FileType.HtmlDocument);
+  let [fileName, setFileName] = useState('newfile' + fileExtension[FileType.HtmlDocument]);
 
   const { getRootProps, getRadioProps, setValue } = useRadioGroup({
     name: "type",
-    defaultValue: HTML_DOCUMENT,
+    defaultValue: FileType.HtmlDocument,
     onChange: (value) => {
       let ext = fileExtension[value];
       if (!fileName.endsWith(ext)) {
@@ -39,23 +33,13 @@ export function NewFileModal(props: NewFileModalProps) {
           setFileName(fileName + ext);
         }
       }
-      setFileType(value as string);
+      setFileType(value as FileType);
     },
   })
   const group = getRootProps()
 
   const handleLoad = async (event) => {
-    let rootNode : SplootNode = null;
-    if (fileType === HTML_DOCUMENT) {
-      rootNode = new SplootHtmlDocument(null);
-    } else if (fileType == JAVASCRIPT_FILE) {
-      rootNode = new JavascriptFile(null);
-      generateScope(rootNode);
-      rootNode.recursivelySetMutations(true);
-    } else if (fileType == DATA_SHEET) {
-      rootNode = new SplootDataSheet(null);
-    }
-    addCodeFile(fileName, fileType, rootNode);
+    addCodeFile(fileName, fileType);
     onClose();
   };
 
@@ -76,7 +60,7 @@ export function NewFileModal(props: NewFileModalProps) {
               for (let type in fileExtension) {
                 if (name.endsWith(fileExtension[type])) {
                   setValue(type);
-                  setFileType(type);
+                  setFileType(type as FileType);
                 }
               }
               setFileName(name);
@@ -86,17 +70,17 @@ export function NewFileModal(props: NewFileModalProps) {
           <HStack {...group}>
             {/*
               // @ts-ignore */}
-            <RadioCard key={HTML_DOCUMENT} {...getRadioProps({value: HTML_DOCUMENT})}>
+            <RadioCard key={FileType.HtmlDocument} {...getRadioProps({value: FileType.HtmlDocument})}>
               HTML
             </RadioCard>
             {/*
               // @ts-ignore */}
-            <RadioCard key={JAVASCRIPT_FILE} {...getRadioProps({value: JAVASCRIPT_FILE})}>
+            <RadioCard key={FileType.JavaScript} {...getRadioProps({value: FileType.JavaScript})}>
               JavaScript 
             </RadioCard>
             {/*
               // @ts-ignore */}
-            <RadioCard key={DATA_SHEET} {...getRadioProps({value: DATA_SHEET})}>
+            <RadioCard key={FileType.DataSheet} {...getRadioProps({value: FileType.DataSheet})}>
               Data Spreadsheet
             </RadioCard>
           </HStack>
