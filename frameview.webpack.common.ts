@@ -17,8 +17,8 @@ export default {
   mode: process.env.NODE_ENV || 'development',
 
   entry: {
-    splootframeclient: './src/view/index.tsx',
-    splootframepythonclient: './src/view/python.tsx',
+    splootframeclient: './src/frame_web/index.tsx',
+    splootframepythonclient: './src/frame_python/python.tsx',
     serviceworker: {
       import: './src/serviceworker/serviceworker.ts',
       filename: 'sw.js' // Service worker needs a consistent file name.
@@ -52,12 +52,12 @@ export default {
       ]
     }),
     new HtmlWebpackPlugin({
-      template: './src/view/splootframeclient.html',
+      template: './src/frame_web/splootframeclient.html',
       filename: 'splootframeclient.html',
       excludeChunks: ['splootframepythonclient']
     }),
     new HtmlWebpackPlugin({
-      template: './src/view/splootframepythonclient.html',
+      template: './src/frame_python/splootframepythonclient.html',
       filename: 'splootframepythonclient.html',
       excludeChunks: ['splootframeclient']
     })

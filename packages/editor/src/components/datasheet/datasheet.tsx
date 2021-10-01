@@ -1,12 +1,11 @@
 import React, { MutableRefObject } from 'react'
 import { observer } from "mobx-react";
 import { Spreadsheet, DataEditor } from "react-spreadsheet";
-import { DataSheetState } from '../../context/editor_context';
+import { DataSheetState } from '../../context/editor_context.js';
 import { Box, Button, ButtonGroup, FormControl, FormHelperText, FormLabel, HStack, Input, Popover, PopoverArrow, PopoverCloseButton, PopoverContent, PopoverTrigger, Stack, useDisclosure } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import { SplootDataFieldDeclaration } from '../../language/types/dataset/field_declaration';
-import { SplootDataStringEntry } from '../../language/types/dataset/string_entry';
-import { SplootDataRow } from '../../language/types/dataset/row';
+import { SplootDataFieldDeclaration } from '../../language/types/dataset/field_declaration.js';
+import { SplootDataRow } from '../../language/types/dataset/row.js';
 
 
 interface TextInputProps{

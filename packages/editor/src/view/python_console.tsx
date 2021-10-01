@@ -7,11 +7,10 @@ import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 
 import React from "react"
-import ReactDOM from "react-dom"
 
 import WasmTTY  from "./wasm-tty/wasm-tty.js";
 import { Button, ButtonGroup } from "@chakra-ui/react";
-import { AppProviders } from "./providers";
+import { AppProviders } from "./providers.js";
 
 const PARENT_TARGET_DOMAIN = process.env.EDITOR_DOMAIN;
 export enum FrameState {
@@ -37,7 +36,7 @@ interface ConsoleState {
   autoRun: boolean;
 }
 
-class Console extends React.Component<ConsoleProps, ConsoleState> {
+export class Console extends React.Component<ConsoleProps, ConsoleState> {
   private termRef : React.RefObject<HTMLDivElement>;
   private term : Terminal;
   private terminalFitAddon : FitAddon;
@@ -374,12 +373,10 @@ class Console extends React.Component<ConsoleProps, ConsoleState> {
   }
 }
 
-const root = document.getElementById('app-root')
-
-ReactDOM.render(
-  <AppProviders>
-    <Console/>
-  </AppProviders>,
-  root
-);
-
+export const PythonConsole = () => {
+  return (
+    <AppProviders>
+      <Console/>
+    </AppProviders>
+  )
+}

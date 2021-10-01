@@ -23,3 +23,6 @@ export { NodeBlock } from './layout/rendered_node.js';
 export { EditorStateContext, EditorState, DataSheetState } from './context/editor_context.js';
 export { ViewPage } from './components/preview/frame_view.js';
 export { DataSheetEditor } from "./components/datasheet/datasheet.js"
+
+export { runServiceWorker } from "./serviceworker/serviceworker.js"
+export { PythonConsole } from "./view/python_console.js"

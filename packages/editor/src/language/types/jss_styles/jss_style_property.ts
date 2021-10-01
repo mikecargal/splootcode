@@ -18,7 +18,7 @@ class Generator implements SuggestionGenerator {
   staticSuggestions(parent: ParentReference, index: number) : SuggestedNode[] {
     let res = [];
     for (let prop of getCssProperties()) {
-      res.push(new SuggestedNode(new JssStyleProperty(null, prop), 'style-prop ' + prop, prop, true));
+      res.push(new SuggestedNode(new JssStyleProperty(null, prop), 'jss-style-prop ' + prop, prop, true));
     }
     return res;
   };

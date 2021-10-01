@@ -2,7 +2,7 @@ import { SuggestedNode } from "../suggested_node.js";
 import { SplootHtmlElement } from "../types/html/html_element.js";
 
 // https://github.com/microsoft/vscode-custom-data/blob/master/web-data/data/browsers.html-data.json
-import * as vscodeHtmlData from 'vscode-web-custom-data/data/browsers.html-data.json';
+import vscodeHtmlData from 'vscode-web-custom-data/data/browsers.html-data.json';
 import { SplootHtmlAttribute } from "../types/html/html_attribute.js";
 import { ReactElementNode } from "../types/component/react_element.js";
 import { ComponentProperty } from "../types/component/component_property.js";

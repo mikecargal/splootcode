@@ -1,8 +1,8 @@
 import React from 'react';
-import { NodeSelection } from './selection';
-import { NodeBlock } from '../layout/rendered_node';
+import { NodeSelection } from './selection.js';
+import { NodeBlock } from '../layout/rendered_node.js';
 import { observable, action } from 'mobx';
-import { SplootDataSheet } from '../language/types/dataset/datasheet';
+import { SplootDataSheet } from '../language/types/dataset/datasheet.js';
 
 export class EditorState {
   @observable

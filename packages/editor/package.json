@@ -5,16 +5,19 @@
     "lib"
   ],
   "scripts": {
-    "build": "rollup -c"
+    "clean": "rm -rf lib/*",
+    "copy-static": "copyfiles -u 1 \"./src/**/*.css\" lib/",
+    "build": "yarn clean && tsc && yarn copy-static"
   },
   "type": "module",
-  "module": "lib/index.esm.js",
+  "module": "lib/index.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.5",
     "babel": "^6.23.0",
+    "copyfiles": "^2.4.1",
     "css-loader": "^3.2.0",
     "file-loader": "^6.0.0",
     "postcss": "^8.3.8",

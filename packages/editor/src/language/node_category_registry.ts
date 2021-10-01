@@ -60,6 +60,9 @@ export function registerNodeCateogry(nodeType: string, category: NodeCategory, a
   if (!AutocompleteFunctionMap.has(category)) {
     AutocompleteFunctionMap.set(category, new Set<SuggestionGenerator>());
   }
+  if (CategoryMap.get(category).has(nodeType)) {
+    return;
+  }
   CategoryMap.get(category).add(nodeType);
   AutocompleteFunctionMap.get(category).add(autocomplete);
   if (!TypeToCategoryMap.has(nodeType)) {
