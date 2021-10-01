@@ -7,9 +7,7 @@ import { NodeSelection, NodeSelectionState } from "../../context/selection.js"
 import {
   LayoutComponent,
   LayoutComponentType,
-} from "../../language/type_registry.js"
-import { SPLOOT_EXPRESSION } from "../../language/types/js/expression.js"
-import { PYTHON_EXPRESSION } from "../../language/types/python/python_expression.js"
+} from "@splootcode/core"
 import { NodeBlock, RenderedInlineComponent } from "../../layout/rendered_node.js"
 import { AttachedChildRightExpressionView } from "./attached_child.js"
 import { SplootExpressionView } from "./expression.js"
@@ -93,7 +91,7 @@ export class EditorNodeBlock extends React.Component<NodeBlockProps> {
     let topPos = block.y + block.marginTop;
     let internalLeftPos = leftPos + 10;
 
-    if (block.node.type === SPLOOT_EXPRESSION || block.node.type === PYTHON_EXPRESSION) {
+    if (block.node.type === 'SPLOOT_EXPRESSION' || block.node.type === 'PYTHON_EXPRESSION') {
       return <SplootExpressionView block={block} selection={selection} selectionState={selectionState}/>
     }
 

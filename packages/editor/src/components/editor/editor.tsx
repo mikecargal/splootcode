@@ -7,10 +7,7 @@ import { NodeSelection, SelectionState } from "../../context/selection.js"
 import {
   adaptNodeToPasteDestination,
   deserializeNode,
-} from "../../language/type_registry.js"
-import { HTML_DOCUMENT } from "../../language/types/html/html_document.js"
-import { JAVASCRIPT_FILE } from "../../language/types/js/javascript_file.js"
-import { PYTHON_FILE } from "../../language/types/python/python_file.js"
+} from "@splootcode/core"
 import { NodeBlock } from "../../layout/rendered_node.js"
 import { ActiveCursor } from "./cursor.js"
 import { DragOverlay } from "./drag_overlay.js"
@@ -40,7 +37,7 @@ export class Editor extends React.Component<EditorProps> {
   render() {
     let {block, selection} = this.props;
     let fileBody = null;
-    if (block.node.type === JAVASCRIPT_FILE || block.node.type === PYTHON_FILE || block.node.type === HTML_DOCUMENT) {
+    if (block.node.type === 'JAVASCRIPT_FILE' || block.node.type === 'PYTHON_FILE' || block.node.type === 'HTML_DOCUMENT') {
       fileBody = block.renderedChildSets['body'];
     }
     let height = block.rowHeight + block.indentedBlockHeight;

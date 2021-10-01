@@ -4,7 +4,6 @@ import { observer } from "mobx-react"
 import React from "react"
 
 import { NodeSelection, NodeSelectionState } from "../../context/selection.js"
-import { NodeAttachmentLocation } from "../../language/type_registry.js"
 import { RenderedChildSetBlock } from "../../layout/rendered_childset_block.js"
 import { EditorNodeBlock } from "./node_block.js"
 

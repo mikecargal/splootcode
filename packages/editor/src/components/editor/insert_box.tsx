@@ -10,35 +10,38 @@ import {
   NodeSelectionState,
   SelectionState,
 } from "../../context/selection.js"
-import { ParentReference } from "../../language/node.js"
 import {
+  ParentReference,
   getAutocompleteFunctionsForCategory,
   NodeCategory,
   SuggestionGenerator,
-} from "../../language/node_category_registry.js"
-import { SuggestedNode } from "../../language/suggested_node.js"
+  SuggestedNode
+} from "@splootcode/core"
 import { EditorNodeBlock } from "./node_block.js"
 import { RenderedChildSetBlock, stringWidth } from "../../layout/rendered_childset_block.js"
+import { NodeBlock } from "../.."
 
-function filterSuggestions(parentRef: ParentReference, index: number, staticSuggestions: SuggestedNode[], generators: Set<SuggestionGenerator>, userInput: string) : SuggestedNode[] {
+function filterSuggestions(parentRef: ParentReference, index: number, staticSuggestions: RenderedSuggestion[], generators: Set<SuggestionGenerator>, userInput: string) : RenderedSuggestion[] {
   let suggestions = [...staticSuggestions];
   generators.forEach((generator: SuggestionGenerator) => {
-    suggestions = suggestions.concat(generator.dynamicSuggestions(parentRef, index, userInput))
+    suggestions = suggestions.concat(
+      generator.dynamicSuggestions(parentRef, index, userInput).map(s => new RenderedSuggestion(s))
+    )
   });
-  const options: Fuse.FuseOptions<SuggestedNode> = {
+  const options: Fuse.FuseOptions<RenderedSuggestion> = {
     keys: ['key', 'display', 'searchTerms'],
     caseSensitive: false,
   };
   const fuse = new Fuse(suggestions, options)
-  const results = fuse.search(userInput) as SuggestedNode[];
+  const results = fuse.search(userInput) as RenderedSuggestion[];
   return results;
 }
 
 interface InsertBoxState {
   userInput: string;
   autoWidth: number;
-  filteredSuggestions: SuggestedNode[];
-  staticSuggestions: SuggestedNode[];
+  filteredSuggestions: RenderedSuggestion[];
+  staticSuggestions: RenderedSuggestion[];
   suggestionGenerators: Set<SuggestionGenerator>;
   activeSuggestion: number;
   category: NodeCategory;
@@ -51,6 +54,22 @@ interface InsertBoxProps {
   editorY: number;
   insertBoxData: InsertBoxData;
   selection: NodeSelection;
+}
+
+class RenderedSuggestion {
+  suggestedNode: SuggestedNode;
+  nodeBlock: NodeBlock;
+  key: string;
+  searchTerms: string;
+  
+  constructor(suggestedNode: SuggestedNode) {
+    this.suggestedNode = suggestedNode;
+    this.key = suggestedNode.key;
+    this.searchTerms = suggestedNode.searchTerms;
+    let nodeBlock = new NodeBlock(null, suggestedNode.node, null, 0, false);
+    nodeBlock.calculateDimensions(0, 0, null);
+    this.nodeBlock = nodeBlock;
+  }
 }
 
 @observer
@@ -128,7 +147,7 @@ export class InsertBox extends React.Component<InsertBoxProps, InsertBoxState> {
                 className = "autocomplete-suggestion-active";
               }
 
-              if (!suggestion.valid) {
+              if (!suggestion.suggestedNode.valid) {
                 className += " invalid"
               }
 
@@ -147,7 +166,7 @@ export class InsertBox extends React.Component<InsertBoxProps, InsertBoxState> {
                       selection={null}
                       selectionState={NodeSelectionState.UNSELECTED}
                     /></svg>
-                  <span className="autocomplete-description">{ suggestion.description}</span>
+                  <span className="autocomplete-description">{ suggestion.suggestedNode.description }</span>
                 </li>
               );
             })}
@@ -249,7 +268,7 @@ export class InsertBox extends React.Component<InsertBoxProps, InsertBoxState> {
         this.setState({
           activeSuggestion: 0,
         });
-        this.onSelected(selectedNode);
+        this.onSelected(selectedNode.suggestedNode);
       }
     }
     // User pressed the up arrow, decrement the index
@@ -335,14 +354,14 @@ export class InsertBox extends React.Component<InsertBoxProps, InsertBoxState> {
   }
 
   // Event fired when the user clicks on a suggestion
-  onClickSuggestion = (suggestion: SuggestedNode) => {
+  onClickSuggestion = (suggestion: RenderedSuggestion) => {
     return (e : React.MouseEvent<HTMLLIElement>) => {
       // Update the user input and reset the rest of the state
       this.setState({
         activeSuggestion: 0,
         filteredSuggestions: [],
       });
-      this.onSelected(suggestion);
+      this.onSelected(suggestion.suggestedNode);
     };
   };
 }

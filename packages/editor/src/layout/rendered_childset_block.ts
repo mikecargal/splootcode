@@ -1,20 +1,13 @@
 import { action, observable } from "mobx"
 
+import { ChildSetObserver, ChildSet, ChildSetType, ChildSetMutationType, ChildSetMutation, LayoutComponent, LayoutComponentType, SplootNode } from "@splootcode/core"
+
 import {
   NodeCursor,
   NodeSelection,
   NodeSelectionState,
   SelectionState,
 } from "../context/selection.js"
-import { ChildSet, ChildSetType } from "../language/childset.js"
-import {
-  ChildSetMutation,
-  ChildSetMutationType,
-} from "../language/mutations/child_set_mutations.js"
-import { SplootNode } from "../language/node.js"
-import { ChildSetObserver } from "../language/observers.js"
-import { LayoutComponent, LayoutComponentType } from "../language/type_registry.js"
-import { SPLOOT_EXPRESSION } from "../language/types/js/expression.js"
 import {
   NODE_BLOCK_HEIGHT,
   NodeBlock,

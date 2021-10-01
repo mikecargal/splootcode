@@ -8,7 +8,7 @@
     "build": "rollup -c"
   },
   "type": "module",
-  "module": "lib/index.esm.js",
+  "module": "lib/editor.esm.js",
   "types": "lib/index.d.ts",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^20.0.0",
@@ -38,7 +38,6 @@
     "mobx": "^5.15.0",
     "mobx-react": "^6.2.5",
     "react-icons": "^4.2.0",
-    "react-router-dom": "^5.1.2",
     "react-spreadsheet": "^0.5.4",
     "react-tabs": "^3.1.0",
     "tslib": "^2.3.1",
@@ -52,6 +51,7 @@
     "@chakra-ui/react": "1.2.1",
     "@emotion/react": "^11.1.4",
     "@emotion/styled": "^11.0.0",
+    "@splootcode/core": "file:../core",
     "framer-motion": "^3.2.2-rc.1",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",

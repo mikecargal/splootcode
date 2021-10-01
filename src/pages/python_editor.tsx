@@ -1,4 +1,5 @@
-import { Editor, EditorState, EditorStateContext, Project, PythonFrame, SplootPackage } from '@splootcode/editor';
+import { Project, SplootPackage} from "@splootcode/core"
+import { Editor, EditorState, EditorStateContext, PythonFrame } from '@splootcode/editor';
 import React from 'react'
 
 

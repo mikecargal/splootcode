@@ -4,8 +4,7 @@ import { observer } from "mobx-react"
 import React from "react"
 
 import { NodeSelection, SelectionState } from "../../context/selection.js"
-import { LayoutComponentType } from "../../language/type_registry.js"
-import { RenderedChildSetBlock } from "../../layout/rendered_childset_block.js"
+import { LayoutComponentType } from "@splootcode/core"
 
 interface ActiveCursorProps {
   selection: NodeSelection;

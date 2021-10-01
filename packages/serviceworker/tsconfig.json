@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "outDir": "./lib",
+    "rootDir": "./src",
+    "target": "es5",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM", "WebWorker"],
+    "jsx": "react",
+    "declaration": true,
+    "declarationDir": "lib",
+    "moduleResolution": "Node",
+    "strict": false,
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+  },
+  "include": ["src"],
+}

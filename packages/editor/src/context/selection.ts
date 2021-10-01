@@ -1,8 +1,6 @@
 
 import { action, computed, observable } from "mobx"
-import { SplootNode } from "../language/node.js"
-import { NodeCategory } from "../language/node_category_registry.js"
-import { SplootExpression } from "../language/types/js/expression.js"
+import { SplootNode, NodeCategory } from "@splootcode/core"
 import { RenderedChildSetBlock } from "../layout/rendered_childset_block.js"
 import { NodeBlock } from "../layout/rendered_node.js"
 import { CursorMap } from "./cursor_map.js"
@@ -267,11 +265,11 @@ export class NodeSelection {
     // remove child at index
     let child = listBlock.childSet.removeChild(index);
     let childSet = node.getChildSet(childSetId)
-    if (childSet.nodeCategory === NodeCategory.Expression) {
-      (childSet.getChild(0) as SplootExpression).getTokenSet().addChild(child);
-    } else {
-      childSet.addChild(child);
-    }
+    // if (childSet.nodeCategory === NodeCategory.Expression) {
+    //   (childSet.getChild(0) as SplootExpression).getTokenSet().addChild(child);
+    // } else {
+    childSet.addChild(child);
+    // }
     // insert node at index.
     listBlock.childSet.insertNode(node, index);
   }

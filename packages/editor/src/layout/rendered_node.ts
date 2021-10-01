@@ -1,19 +1,9 @@
 import { observable } from "mobx"
 
 import { NodeCursor, NodeSelection } from "../context/selection.js"
-import { NodeMutation, NodeMutationType } from "../language/mutations/node_mutations.js"
-import { SplootNode } from "../language/node.js"
-import { NodeObserver } from "../language/observers.js"
-import {
-  LayoutComponent,
-  LayoutComponentType,
-  NodeLayout,
-} from "../language/type_registry.js"
-import { SPLOOT_EXPRESSION } from "../language/types/js/expression.js"
-import { PYTHON_EXPRESSION } from "../language/types/python/python_expression.js"
-import { getColour } from "./colors.js"
 import { RenderedChildSetBlock, stringWidth } from "./rendered_childset_block.js"
-import { LoopAnnotation, NodeAnnotation, NodeAnnotationType } from "../language/annotations/annotations.js"
+
+import { NodeAnnotation, LoopAnnotation, LayoutComponent, NodeObserver, NodeLayout, SplootNode, getColour, LayoutComponentType, NodeMutation, NodeMutationType } from "@splootcode/core"
 
 export const NODE_INLINE_SPACING = 8;
 export const NODE_INLINE_SPACING_SMALL = 6;
@@ -137,7 +127,7 @@ export class NodeBlock implements NodeObserver {
       }
     });
 
-    if (node.type === SPLOOT_EXPRESSION || node.type === PYTHON_EXPRESSION) {
+    if (node.type === 'SPLOOT_EXPRESSION' || node.type === 'PYTHON_EXPRESSION') {
       this.blockWidth = this.renderedChildSets['tokens'].width;
       let childSetBlock = this.renderedChildSets['tokens'];
       this.rowHeight = Math.max(this.rowHeight, childSetBlock.height);
@@ -257,7 +247,7 @@ export class NodeBlock implements NodeObserver {
       }            
     });
 
-    if (this.node.type === SPLOOT_EXPRESSION || this.node.type === PYTHON_EXPRESSION) {
+    if (this.node.type === 'SPLOOT_EXPRESSION' || this.node.type === 'PYTHON_EXPRESSION') {
       let childSetBlock = this.renderedChildSets['tokens'];
       childSetBlock.calculateDimensions(x, y + this.marginTop, selection);
       marginRight = this.renderedChildSets['tokens'].width;

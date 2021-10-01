@@ -5,8 +5,7 @@ import { NodeBlock } from "../../layout/rendered_node.js";
 
 import "./runtime_annotations.css";
 import { stringWidth } from "../../layout/rendered_childset_block.js";
-import { AssignmentAnnotation, NodeAnnotation, NodeAnnotationType, ReturnValueAnnotation, RuntimeErrorAnnotation, SideEffectAnnotation } from "../../language/annotations/annotations.js";
-import { formatPythonAssingment, formatPythonData, formatPythonReturnValue } from "../../language/types/python/utils.js";
+import { NodeAnnotationType, annotationToString } from "@splootcode/core";
 
 interface LoopAnnotationProps {
     nodeBlock: NodeBlock;
@@ -101,24 +100,6 @@ export class LoopAnnotation extends React.Component<LoopAnnotationProps> {
 interface RuntimeAnnotationProps {
   nodeBlock: NodeBlock
 }
-
-function annotationToString(annotation: NodeAnnotation) : string {
-  switch (annotation.type) {
-    case NodeAnnotationType.Assignment:
-      return formatPythonAssingment(annotation.value as AssignmentAnnotation);;
-    case NodeAnnotationType.SideEffect:
-      return (annotation.value as SideEffectAnnotation).message;
-    case NodeAnnotationType.ReturnValue:
-      return formatPythonReturnValue(annotation.value as ReturnValueAnnotation);
-    case NodeAnnotationType.RuntimeError:
-      const val = annotation.value as RuntimeErrorAnnotation;
-      if(val.errorType === 'EOFError') {
-        return 'No input, run the program to enter input.'
-      }
-      return `${val.errorType}: ${val.errorMessage}`;
-  }
-}
-
 
 @observer
 export class RuntimeAnnotation extends React.Component<RuntimeAnnotationProps> {

@@ -1,4 +1,5 @@
-import { DataSheetEditor, DataSheetState, Editor, EditorState, EditorStateContext, Project, SplootPackage, ViewPage } from '@splootcode/editor';
+import { Project, SplootPackage } from "@splootcode/core"
+import { DataSheetEditor, DataSheetState, Editor, EditorState, EditorStateContext, ViewPage } from '@splootcode/editor';
 import React from 'react'
 
 

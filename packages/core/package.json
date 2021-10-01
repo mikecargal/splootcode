@@ -1,0 +1,33 @@
+{
+  "name": "@splootcode/core",
+  "version": "1.0.0",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "type": "module",
+  "module": "lib/core.esm.js",
+  "types": "lib/index.d.ts",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.0.5",
+    "babel": "^6.23.0",
+    "postcss": "^8.3.8",
+    "rollup": "^2.57.0",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-polyfill-node": "^0.7.0",
+    "rollup-plugin-postcss": "^4.0.1",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "style-loader": "^1.0.1",
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "tslib": "^2.3.1"
+  },
+  "peerDependencies": {
+    "recast": "^0.19.1"
+  }
+}

@@ -14,7 +14,9 @@ import { NewFileModal } from '../components/new_file_modal';
 import { WebEditorPanels } from './web_editor';
 import { PythonEditorPanels } from './python_editor';
 import { NewProjectModal } from '../components/new_project_modal';
-import { DataSheetState, DATA_SHEET, EditorState, EditorStateContext, FileType, NodeBlock, Project, ProjectLayoutType, SplootDataSheet, SplootFile, SplootNode, SplootPackage } from '@splootcode/editor';
+import { DataSheetState, NodeBlock, EditorState, EditorStateContext } from '@splootcode/editor';
+import { FileType, DATA_SHEET, Project, ProjectLayoutType, SplootDataSheet, SplootFile, SplootNode, SplootPackage } from '@splootcode/core';
+
 
 interface PageEditorProps {
 };

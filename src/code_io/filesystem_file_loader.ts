@@ -1,4 +1,4 @@
-import { FileLoader, SerializedNode, SerializedSplootPackage, SplootNode, SplootPackage } from "@splootcode/editor";
+import { FileLoader, SerializedNode, SerializedSplootPackage, SplootNode, SplootPackage } from "@splootcode/core";
 
 
 

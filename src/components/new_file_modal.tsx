@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Box, Button, FormControl, FormHelperText, HStack, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useRadio, useRadioGroup } from "@chakra-ui/react"
-import { FileType } from '@splootcode/editor';
+import { FileType } from '@splootcode/core';
 
 const fileExtension : {[key: string]: string} = {}
 fileExtension[FileType.HtmlDocument] = '.html'
