@@ -55,7 +55,7 @@ This app depends on firebase, but the tools are installs by yarn. Start the fire
 $ yarn start
 ```
 
-The app should now become availble at `http://localhost:4999`.
+The app should now become available at `http://localhost:4999`.
 
 If you want to continually rebuild as you change the code, run this (rebuilds the editor only):
 
