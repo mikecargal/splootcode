@@ -65,7 +65,9 @@ $ yarn watch
 
 And in a separate terminal, run this to continually rebuild the frame:
 
-$ `yarn watch-frame`
+```
+$ yarn watch-frame`
+```
 
 ## License
 
