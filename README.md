@@ -1,4 +1,5 @@
 # SplootCode Editor
+
 An experimental coding interface that's tree-based.
 
 For progress updates, please join the mailing list on [splootcode.io](https://splootcode.io/).
@@ -13,18 +14,22 @@ Code no longer has to rely on cryptic punctuation characters and whitespace to r
 That being said, building a tree-editing interface that's fast, compact and intuitive is no easy feat. This is very much a work in progress.
 
 ## Goals
- * An unrestricted implementation of JavaScript
- * Fast and easy to edit using a keyboard and autocomplete
- * A responsive layout that adapts to different screen sizes
- * Help developers avoid syntax errors and other common programming errors
- * Avoid busywork like escaping, bracket matching, wrapping and whitespace
- * Let beginners focus on the logic of their code rather than the syntax
+
+- An unrestricted implementation of JavaScript
+- Fast and easy to edit using a keyboard and autocomplete
+- A responsive layout that adapts to different screen sizes
+- Help developers avoid syntax errors and other common programming errors
+- Avoid busywork like escaping, bracket matching, wrapping and whitespace
+- Let beginners focus on the logic of their code rather than the syntax
 
 ## Development
+
 ### Requirements
+
 You'll need to have [nodejs](https://nodejs.org/) and [yarn](https://yarnpkg.com/) installed.
 
 ### Local Dev
+
 Install dependencies:
 
 ```
@@ -37,7 +42,6 @@ Generate type information for built-in Javascript variables and functions.
 $ yarn generate-types
 ```
 
-
 There are two parts to this project, the editor and the runtime which is the iframe which executes the code.
 You will need to build the compiled assests for both the main editor and the frame.
 
@@ -46,11 +50,12 @@ $ yarn build && yarn build-frame
 ```
 
 This app depends on firebase, but the tools are installs by yarn. Start the firebase emulator like this:
+
 ```
 $ yarn start
 ```
 
-The app should now become availble at `http://localhost:5000`.
+The app should now become availble at `http://localhost:4999`.
 
 If you want to continually rebuild as you change the code, run this (rebuilds the editor only):
 
@@ -59,9 +64,9 @@ $ yarn watch
 ```
 
 And in a separate terminal, run this to continually rebuild the frame:
-```
-$ yarn watch-frame
-```
+
+$ `yarn watch-frame`
 
 ## License
+
 If you're planning to use this for commercial purposes, please check the [LICENSE](LICENSE) file. It is not a standard open source license.
